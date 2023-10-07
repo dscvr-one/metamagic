@@ -2,9 +2,12 @@
 resolver = "2"
 
 members = [
+    "crates/dscvr-tracing-util",
     "crates/instrumented-error",
 ]
 
 [workspace.dependencies]
-tracing = "0.1.37"
+tracing = "0.1"
 tracing-error = { version = "0.2", features = ["traced-error"] }
+tracing-stackdriver = "0.8"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
