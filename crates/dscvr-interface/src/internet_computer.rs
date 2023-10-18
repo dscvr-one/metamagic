@@ -30,14 +30,14 @@ impl Interface for InternetComputer {
     ) -> Result<Vec<u8>, (RejectionCode, String)> {
         // Ideally ic_cdk::spawn would allow returning a result, but it doesn't. so we go through
         // some gymanistics to make it work.
-        let result: Rc<RefCell<Result<Vec<u8>, (RejectionCode, String)>>> = Rc::new(RefCell::new(Err((
-            RejectionCode::CanisterReject,
-            "spawn failed".to_owned(),
-        ))));
+        let result: Rc<RefCell<Result<Vec<u8>, (RejectionCode, String)>>> = Rc::new(RefCell::new(
+            Err((RejectionCode::CanisterReject, "spawn failed".to_owned())),
+        ));
         {
             let caller_result = result.clone();
             ic_cdk::spawn(async move {
-                let result = ic_cdk::api::call::call_raw(canister_id, &method, &args, payment).await;
+                let result =
+                    ic_cdk::api::call::call_raw(canister_id, &method, &args, payment).await;
                 let _ = caller_result.replace(result);
             });
         }
