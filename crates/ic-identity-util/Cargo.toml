@@ -1,0 +1,17 @@
+[package]
+name = "ic-identity-util"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ic-agent.workspace = true
+ring.workspace = true
+serde.workspace = true
+tracing.workspace = true
+
+instrumented-error = { path = "../instrumented-error" }
+
+[dev-dependencies]
+cargo-husky = { version = "1.5.0", features = ["user-hooks"] }
