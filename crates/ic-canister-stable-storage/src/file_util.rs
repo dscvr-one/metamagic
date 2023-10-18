@@ -16,7 +16,13 @@ pub fn save_to_file<T>(file: &str, t: &T, header: Header, transient: &Transient)
 where
     T: serde::Serialize,
 {
-    let mut writer = BufWriter::new(OpenOptions::new().write(true).create(true).truncate(true).open(file)?);
+    let mut writer = BufWriter::new(
+        OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(file)?,
+    );
     migration::set_stored_schema_version(header.content_schema_version);
     save(&Edge::default(), &mut writer, t, header, transient)?;
     writer.flush()?;

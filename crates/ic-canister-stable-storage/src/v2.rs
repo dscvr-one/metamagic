@@ -50,7 +50,9 @@ where
                 BincodeAdapter::serialize(MovableWriter::new(writer), t)?;
             }
             _ => {
-                return Err(header::Error::InvalidContentFormat(header.content_format as u64).into());
+                return Err(
+                    header::Error::InvalidContentFormat(header.content_format as u64).into(),
+                );
             }
         }
 
@@ -75,14 +77,20 @@ where
 
 /// Deserialize from stable storage using v2 layout
 #[tracing::instrument(skip_all)]
-pub fn restore<R: Read + Seek, T>(interface: &dyn Interface, reader: &mut R) -> Result<(Header, Transient, T), Error>
+pub fn restore<R: Read + Seek, T>(
+    interface: &dyn Interface,
+    reader: &mut R,
+) -> Result<(Header, Transient, T), Error>
 where
     T: for<'a> serde::Deserialize<'a>,
 {
     info!("started inst_count={}", interface.instruction_counter());
 
     let header = Header::new_from_reader(reader)?;
-    info!("read header schema_version={}", header.content_schema_version);
+    info!(
+        "read header schema_version={}",
+        header.content_schema_version
+    );
     set_stored_schema_version(header.content_schema_version);
     let content_start_pos = reader.stream_position()?;
 

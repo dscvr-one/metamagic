@@ -6,7 +6,9 @@ use serde::Serialize;
 use std::io::{Read, Write};
 
 /// The format type of the
-#[derive(Debug, Copy, Clone, Serialize, Deserialize, CandidType, PartialEq, Eq, derive_more::Display)]
+#[derive(
+    Debug, Copy, Clone, Serialize, Deserialize, CandidType, PartialEq, Eq, derive_more::Display,
+)]
 #[repr(u64)]
 pub enum DataFormatType {
     /// Unknown
@@ -34,7 +36,10 @@ impl From<u64> for DataFormatType {
 }
 
 impl DataFormatType {
-    pub fn serde_deserialize<T, Reader>(&self, reader: Reader) -> Result<T, instrumented_error::Error>
+    pub fn serde_deserialize<T, Reader>(
+        &self,
+        reader: Reader,
+    ) -> Result<T, instrumented_error::Error>
     where
         T: for<'a> Deserialize<'a>,
         Reader: Read,
@@ -54,7 +59,11 @@ impl DataFormatType {
         self.serde_deserialize(&mut reader)
     }
 
-    pub fn serde_serialize<T, Writer>(&self, writer: Writer, t: &T) -> Result<(), instrumented_error::Error>
+    pub fn serde_serialize<T, Writer>(
+        &self,
+        writer: Writer,
+        t: &T,
+    ) -> Result<(), instrumented_error::Error>
     where
         T: serde::Serialize,
         Writer: Write,
@@ -164,7 +173,8 @@ mod test {
     use std::{cell::RefCell, collections::HashMap, fmt::Debug, ops::DerefMut};
 
     use super::super::migration::{
-        deserialize_default_if_gte_version, deserialize_default_if_lt_version, set_stored_schema_version,
+        deserialize_default_if_gte_version, deserialize_default_if_lt_version,
+        set_stored_schema_version,
     };
 
     use super::{BincodeAdapter, SerdeDataFormat};
@@ -204,14 +214,18 @@ mod test {
         pub field2: String,
         pub map: HashMap<u64, NestedV2>,
         pub e: EnumV2,
-        #[serde(deserialize_with = "deserialize_default_if_lt_version::<'_, CURRENT_SCHEMA_VERSION, 0, _, _>")]
+        #[serde(
+            deserialize_with = "deserialize_default_if_lt_version::<'_, CURRENT_SCHEMA_VERSION, 0, _, _>"
+        )]
         pub field3: i64,
         #[serde(
             skip_serializing,
             deserialize_with = "deserialize_default_if_gte_version::<'_, CURRENT_SCHEMA_VERSION, 0, _, _>"
         )]
         pub deprecated: HashMap<u64, u64>,
-        #[serde(deserialize_with = "deserialize_default_if_lt_version::<'_, CURRENT_SCHEMA_VERSION, 0,  _, _>")]
+        #[serde(
+            deserialize_with = "deserialize_default_if_lt_version::<'_, CURRENT_SCHEMA_VERSION, 0,  _, _>"
+        )]
         pub new_optional: Option<i64>,
     }
 
@@ -231,7 +245,9 @@ mod test {
         pub field2: String,
         pub map: HashMap<u64, NestedV2>,
         pub e: EnumV2,
-        #[serde(deserialize_with = "deserialize_default_if_lt_version::<'_, CURRENT_SCHEMA_VERSION, 0, _, _>")]
+        #[serde(
+            deserialize_with = "deserialize_default_if_lt_version::<'_, CURRENT_SCHEMA_VERSION, 0, _, _>"
+        )]
         pub field3: i64,
         #[serde(default)]
         pub new_optional: Option<i64>,
@@ -241,7 +257,9 @@ mod test {
     struct NestedV2 {
         pub field1: i32,
         pub field2: String,
-        #[serde(deserialize_with = "deserialize_default_if_lt_version::<'_, CURRENT_SCHEMA_VERSION, 0, _, _>")]
+        #[serde(
+            deserialize_with = "deserialize_default_if_lt_version::<'_, CURRENT_SCHEMA_VERSION, 0, _, _>"
+        )]
         pub field3: String,
     }
 
@@ -278,7 +296,11 @@ mod test {
             Self {
                 field1: val.field1,
                 field2: val.field2,
-                map: val.map.into_iter().map(|(key, val)| (key, val.into())).collect(),
+                map: val
+                    .map
+                    .into_iter()
+                    .map(|(key, val)| (key, val.into()))
+                    .collect(),
                 e: val.e.into(),
                 to_be_removed: val.deprecated,
             }

@@ -34,7 +34,9 @@ where
     } else {
         T::deserialize(deserializer)
     };
-    ret.map_err(|e| serde::de::Error::custom(format!("Migration error. Tag {DEBUG_TAG} Error: {e}")))
+    ret.map_err(|e| {
+        serde::de::Error::custom(format!("Migration error. Tag {DEBUG_TAG} Error: {e}"))
+    })
 }
 
 #[inline]
@@ -50,7 +52,9 @@ where
     } else {
         T::deserialize(deserializer)
     };
-    ret.map_err(|e| serde::de::Error::custom(format!("Migration error. Tag {DEBUG_TAG} Error: {e}")))
+    ret.map_err(|e| {
+        serde::de::Error::custom(format!("Migration error. Tag {DEBUG_TAG} Error: {e}"))
+    })
 }
 
 /// Deserialize using one method if the stored schema version is less than `VERSION`.
@@ -80,7 +84,9 @@ where
     } else {
         post_version_func(deserializer)
     };
-    ret.map_err(|e| serde::de::Error::custom(format!("Migration error. Tag {DEBUG_TAG} Error: {e}")))
+    ret.map_err(|e| {
+        serde::de::Error::custom(format!("Migration error. Tag {DEBUG_TAG} Error: {e}"))
+    })
 }
 
 /// Deserialize into a different vector of primitive type if the stored schema version is less than `VERSION`.
@@ -116,7 +122,14 @@ where
 
 /// Deserialize into a option of a different type if the stored schema version is less than `VERSION`.
 #[inline]
-pub fn deserialize_into_primitive_option_if_lt_version<'de, const VERSION: u64, const DEBUG_TAG: u32, O, T, D>(
+pub fn deserialize_into_primitive_option_if_lt_version<
+    'de,
+    const VERSION: u64,
+    const DEBUG_TAG: u32,
+    O,
+    T,
+    D,
+>(
     deserializer: D,
 ) -> Result<Option<T>, D::Error>
 where
@@ -136,7 +149,14 @@ where
 
 /// Deserialize into a different different type if the stored schema version is less than `VERSION`.
 #[inline]
-pub fn deserialize_into_primitive_if_lt_version<'de, const VERSION: u64, const DEBUG_TAG: u32, O, T, D>(
+pub fn deserialize_into_primitive_if_lt_version<
+    'de,
+    const VERSION: u64,
+    const DEBUG_TAG: u32,
+    O,
+    T,
+    D,
+>(
     deserializer: D,
 ) -> Result<T, D::Error>
 where
@@ -156,7 +176,16 @@ where
 
 /// Deserialize into a different vector of primitive type if the stored schema version is less than `VERSION`.
 #[inline]
-pub fn deserialize_into_collection_if_lt_version<'de, const VERSION: u64, const DEBUG_TAG: u32, O, T, CO, CT, D>(
+pub fn deserialize_into_collection_if_lt_version<
+    'de,
+    const VERSION: u64,
+    const DEBUG_TAG: u32,
+    O,
+    T,
+    CO,
+    CT,
+    D,
+>(
     deserializer: D,
 ) -> Result<Vec<T>, D::Error>
 where
@@ -218,18 +247,28 @@ where
 }
 
 #[inline]
-pub fn deserialize_with_debug_tag<'de, const DEBUG_TAG: u32, T, D>(deserializer: D) -> Result<T, D::Error>
+pub fn deserialize_with_debug_tag<'de, const DEBUG_TAG: u32, T, D>(
+    deserializer: D,
+) -> Result<T, D::Error>
 where
     D: serde::Deserializer<'de>,
     T: serde::Deserialize<'de>,
 {
-    T::deserialize(deserializer)
-        .map_err(|e| serde::de::Error::custom(format!("Migration error. Tag {DEBUG_TAG} Error: {e}")))
+    T::deserialize(deserializer).map_err(|e| {
+        serde::de::Error::custom(format!("Migration error. Tag {DEBUG_TAG} Error: {e}"))
+    })
 }
 
 /// Deserialize into a different vector of primitive type if the stored schema version is less than `VERSION`.
 #[inline]
-pub fn deserialize_into_string_collection_if_lt_version<'de, const VERSION: u64, const DEBUG_TAG: u32, O, CO, D>(
+pub fn deserialize_into_string_collection_if_lt_version<
+    'de,
+    const VERSION: u64,
+    const DEBUG_TAG: u32,
+    O,
+    CO,
+    D,
+>(
     deserializer: D,
 ) -> Result<Vec<std::string::String>, D::Error>
 where

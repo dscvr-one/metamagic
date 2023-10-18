@@ -20,13 +20,19 @@ where
 {
     info!("Starting save");
     MsgPackAdapter::serialize(MovableWriter::new(writer), t)?;
-    info!("Total Pre Upgrade Instruction Count {}", system.instruction_counter());
+    info!(
+        "Total Pre Upgrade Instruction Count {}",
+        system.instruction_counter()
+    );
     Ok(())
 }
 
 /// Deserialize using v1 layout
 #[tracing::instrument(skip(reader, system))]
-pub fn restore<R: Read + Seek, T>(system: &dyn Interface, reader: &mut R) -> Result<(Header, Transient, T), Error>
+pub fn restore<R: Read + Seek, T>(
+    system: &dyn Interface,
+    reader: &mut R,
+) -> Result<(Header, Transient, T), Error>
 where
     MsgPackAdapter: SerdeDataFormat,
     T: for<'a> serde::Deserialize<'a>,

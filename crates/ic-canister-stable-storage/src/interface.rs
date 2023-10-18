@@ -89,7 +89,8 @@ pub mod v1 {
     where
         T: for<'a> serde::Deserialize<'a>,
     {
-        let (header, transient, t) = super::super::v1::restore(system, &mut StableReader::default())?;
+        let (header, transient, t) =
+            super::super::v1::restore(system, &mut StableReader::default())?;
         HEADER.with(|h| *h.borrow_mut() = header);
         TRANSIENT.with(|t| *t.borrow_mut() = transient);
         Ok(t)
@@ -106,7 +107,12 @@ pub mod v2 {
 
     /// Serialize using v2 layout into canister stable storage
     #[inline]
-    pub fn save<T>(interface: &dyn Interface, t: &T, format: DataFormatType, version: u64) -> Result<(), Error>
+    pub fn save<T>(
+        interface: &dyn Interface,
+        t: &T,
+        format: DataFormatType,
+        version: u64,
+    ) -> Result<(), Error>
     where
         T: serde::Serialize,
     {
@@ -117,7 +123,13 @@ pub mod v2 {
         header.content_schema_version = version;
 
         TRANSIENT.with(|transient| {
-            super::super::v2::save(interface, &mut StableWriter::default(), t, header, &transient.borrow())
+            super::super::v2::save(
+                interface,
+                &mut StableWriter::default(),
+                t,
+                header,
+                &transient.borrow(),
+            )
         })
     }
 
@@ -126,7 +138,8 @@ pub mod v2 {
     where
         for<'a> T: serde::Deserialize<'a>,
     {
-        let (header, transient, t) = super::super::v2::restore(system, &mut StableReader::default())?;
+        let (header, transient, t) =
+            super::super::v2::restore(system, &mut StableReader::default())?;
         HEADER.with(|h| *h.borrow_mut() = header);
         TRANSIENT.with(|t| *t.borrow_mut() = transient);
         Ok(t)
@@ -209,7 +222,10 @@ macro_rules! define_common_stable_storage_interface {
 
         #[cfg(target_arch = "wasm32")]
         #[dscvr_cdk_macros::update(guard = "is_restore_service", skip_tx_log = true)]
-        fn set_restore_from_stable_storage(_ctx: crate::canister_context::MutableContext, flag: bool) {
+        fn set_restore_from_stable_storage(
+            _ctx: crate::canister_context::MutableContext,
+            flag: bool,
+        ) {
             $crate::interface::set_restore_from_stable_storage(flag);
         }
     };

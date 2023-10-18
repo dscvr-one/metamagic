@@ -67,7 +67,10 @@ impl Header {
     pub fn new_from_reader<R: Read>(reader: &mut R) -> std::result::Result<Self, Error> {
         let header_length = Self::read_u64(reader)?;
         if header_length > FieldIndex::NumFields as u64 {
-            return Err(Error::InvalidHeaderLength(header_length, FieldIndex::NumFields as u64));
+            return Err(Error::InvalidHeaderLength(
+                header_length,
+                FieldIndex::NumFields as u64,
+            ));
         }
 
         let fields = Self::read_n_u64(reader, header_length as usize)?;
@@ -81,7 +84,10 @@ impl Header {
     ) -> std::result::Result<Self, Error> {
         let header_length = Self::read_u64_async(reader).await?;
         if header_length > FieldIndex::NumFields as u64 {
-            return Err(Error::InvalidHeaderLength(header_length, FieldIndex::NumFields as u64));
+            return Err(Error::InvalidHeaderLength(
+                header_length,
+                FieldIndex::NumFields as u64,
+            ));
         }
 
         let fields = Self::read_n_u64_async(reader, header_length as usize).await?;
@@ -137,7 +143,9 @@ impl Header {
     }
 
     // Helper to read a single u64 from a reader
-    async fn read_u64_async<R: AsyncRead + AsyncReadExt + Unpin>(reader: &mut R) -> std::io::Result<u64> {
+    async fn read_u64_async<R: AsyncRead + AsyncReadExt + Unpin>(
+        reader: &mut R,
+    ) -> std::io::Result<u64> {
         let mut bytes = [0_u8; U64_SIZE];
         reader.read_exact(&mut bytes).await?;
         Ok(u64::from_le_bytes(bytes))
@@ -162,7 +170,9 @@ impl Header {
 
     fn bytes_to_u64(bytes: &[u8], count: usize) -> Vec<u64> {
         (0..count)
-            .map(|i| u64::from_le_bytes(bytes[i * U64_SIZE..(i + 1) * U64_SIZE].try_into().unwrap()))
+            .map(|i| {
+                u64::from_le_bytes(bytes[i * U64_SIZE..(i + 1) * U64_SIZE].try_into().unwrap())
+            })
             .collect::<Vec<_>>()
     }
 
@@ -175,7 +185,9 @@ impl Header {
             self.content_schema_version,
             self.pre_upgrade_instruction_count,
         ];
-        vals.into_iter().flat_map(|v| v.to_le_bytes()).collect::<Vec<u8>>()
+        vals.into_iter()
+            .flat_map(|v| v.to_le_bytes())
+            .collect::<Vec<u8>>()
     }
 }
 
@@ -222,7 +234,9 @@ mod test {
 
         assert_eq!(bytes.len(), U64_SIZE * 5);
 
-        let roundtrip_header = Header::new_from_reader_async(&mut bytes.as_slice()).await.unwrap();
+        let roundtrip_header = Header::new_from_reader_async(&mut bytes.as_slice())
+            .await
+            .unwrap();
         assert_eq!(header, roundtrip_header);
 
         assert_eq!(
