@@ -17,6 +17,25 @@ pub fn setup_gcp_tracing() {
         .init();
 }
 
+/// Setup the common tracing configuration
+pub fn setup_tracing() {
+    use tracing_error::ErrorLayer;
+    use tracing_subscriber::{prelude::*, EnvFilter, Registry};
+    use tracing_tree::HierarchicalLayer;
+
+    Registry::default()
+        .with(
+            HierarchicalLayer::default()
+                .with_verbose_entry(false)
+                .with_verbose_exit(false)
+                .with_targets(true)
+                .with_bracketed_fields(true)
+                .with_filter(EnvFilter::from_default_env()),
+        )
+        .with(ErrorLayer::default())
+        .init();
+}
+
 /// Recrusively log the top-level error and all its sources
 pub fn err_to_string(e: impl std::error::Error) -> String {
     let mut s = format!("{:?}", e);
