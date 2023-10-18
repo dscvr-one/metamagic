@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  RUST_VERSION: 1.73.0
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ env.RUST_VERSION }}
+      - uses: jwlawson/actions-setup-cmake@v1.13
+      - name: Run
+        run: ./build-scripts/build_and_test.sh
+        env:
+          CARGO_INCREMENTAL: "0"

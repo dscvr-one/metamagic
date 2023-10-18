@@ -1,0 +1,27 @@
+[package]
+name = "ic-canister-stable-storage"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bincode.workspace = true
+candid.workspace = true
+derive_more.workspace = true
+flate2.workspace = true
+futures.workspace = true
+ic-cdk.workspace = true
+num-traits.workspace = true
+rmp-serde.workspace = true
+serde_bytes.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+dscvr-interface = { path = "../dscvr-interface" }
+ic-canister-io = { path = "../ic-canister-io" }
+instrumented-error = { path = "../instrumented-error" }
+
+[dev-dependencies]
+tokio.workspace = true
