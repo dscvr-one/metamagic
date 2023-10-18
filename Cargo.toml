@@ -5,6 +5,7 @@ members = [
     "crates/dscvr-interface",
     "crates/dscvr-tracing-util",
     "crates/ic-canister-io",
+    "crates/ic-canister-logger",
     "crates/ic-canister-stable-storage",
     "crates/ic-identity-util",
     "crates/instrumented-error",
