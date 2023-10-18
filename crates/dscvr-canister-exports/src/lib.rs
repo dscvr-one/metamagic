@@ -12,7 +12,8 @@ macro_rules! define_canister_exports {
     () => {
         pub mod canister_exports {
             /// Aliased type for a canister query method
-            pub type Method = fn(crate::canister_context::ImmutableContext<'_>, &[u8]) -> Result<Vec<u8>, String>;
+            pub type Method =
+                fn(crate::canister_context::ImmutableContext<'_>, &[u8]) -> Result<Vec<u8>, String>;
             /// Aliased type for a canister update method
             pub type UpdateMethod = fn(
                 crate::canister_context::MutableContext<'_>,
@@ -20,11 +21,16 @@ macro_rules! define_canister_exports {
                 crate::canister_context::UpdateContext<'_>,
             ) -> Result<Vec<u8>, String>;
             /// Aliased type for a cansiter init method
-            pub type Init =
-                fn(crate::canister_context::MutableContext<'_>, &[u8], crate::canister_context::UpdateContext<'_>);
+            pub type Init = fn(
+                crate::canister_context::MutableContext<'_>,
+                &[u8],
+                crate::canister_context::UpdateContext<'_>,
+            );
             /// Aliased type for a canister post upgrade and pre upgrade method
-            pub type Lifecycle =
-                fn(crate::canister_context::MutableContext<'_>, crate::canister_context::UpdateContext<'_>);
+            pub type Lifecycle = fn(
+                crate::canister_context::MutableContext<'_>,
+                crate::canister_context::UpdateContext<'_>,
+            );
 
             /// A canister query method registration
             pub type MethodRegistration = (&'static str, Method);
@@ -79,11 +85,16 @@ pub type CanisterUpdateMethod<State> = fn(
     dscvr_canister_context::UpdateContext<'_>,
 ) -> Result<Vec<u8>, String>;
 /// Aliased type for a cansiter init method
-pub type CanisterInitMethod<State> =
-    fn(dscvr_canister_context::MutableContext<'_, State>, &[u8], dscvr_canister_context::UpdateContext<'_>);
+pub type CanisterInitMethod<State> = fn(
+    dscvr_canister_context::MutableContext<'_, State>,
+    &[u8],
+    dscvr_canister_context::UpdateContext<'_>,
+);
 /// Aliased type for a cansiter lifecycle method
-pub type CanisterLifecycleMethod<State> =
-    fn(dscvr_canister_context::MutableContext<'_, State>, dscvr_canister_context::UpdateContext<'_>);
+pub type CanisterLifecycleMethod<State> = fn(
+    dscvr_canister_context::MutableContext<'_, State>,
+    dscvr_canister_context::UpdateContext<'_>,
+);
 
 /// A single canister registration
 pub struct CanisterDefinition<State> {

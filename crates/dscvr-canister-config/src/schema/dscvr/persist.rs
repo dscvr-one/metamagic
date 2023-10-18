@@ -1,5 +1,7 @@
 use super::*;
-use crate::schema::{write_config, DEFAULT_DSCVR_CONFIG_PATH, LOCAL_DSCVR_CONFIG_PATH, LOCAL_NETWORK_NAME};
+use crate::schema::{
+    write_config, DEFAULT_DSCVR_CONFIG_PATH, LOCAL_DSCVR_CONFIG_PATH, LOCAL_NETWORK_NAME,
+};
 
 impl DSCVRConfig {
     fn generate_default_config(&self) -> Self {

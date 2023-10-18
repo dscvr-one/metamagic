@@ -23,9 +23,11 @@ fn get_config<T>(path: &Path) -> Result<T>
 where
     T: for<'de> Deserialize<'de>,
 {
-    serde_json::from_reader::<_, T>(BufReader::new(std::fs::File::open(path).expect("File exists")))
-        .map_err(|err| format!("{err}"))
-        .into_instrumented_result()
+    serde_json::from_reader::<_, T>(BufReader::new(
+        std::fs::File::open(path).expect("File exists"),
+    ))
+    .map_err(|err| format!("{err}"))
+    .into_instrumented_result()
 }
 
 fn write_config<T>(path: &str, config: &T) -> Result<()>
@@ -61,7 +63,10 @@ pub fn generate_config_from_production() -> Result<DSCVRConfig> {
 }
 
 pub fn generate_dfx_config_for_network(dscvr_cfg: &DSCVRConfig, network: &str) -> Result<()> {
-    write_config(DEFAULT_DFX_CONFIG_PATH, &generate_dfx_json(dscvr_cfg.clone(), network)?)?;
+    write_config(
+        DEFAULT_DFX_CONFIG_PATH,
+        &generate_dfx_json(dscvr_cfg.clone(), network)?,
+    )?;
     write_config(
         DEFAULT_CANISTER_IDS_PATH,
         &generate_canister_ids_json(dscvr_cfg.clone())?,
@@ -80,14 +85,21 @@ pub fn generate_dfx_config_for_network(dscvr_cfg: &DSCVRConfig, network: &str) -
 /// ### Returns
 /// - `Result<Vec<CanisterInstance>>` - returns `Ok()` with a copy of the
 /// newly available canister instances on success.
-pub fn allocate_canisters(canister: &str, network: &str, count: usize) -> Result<Vec<CanisterInstance>> {
+pub fn allocate_canisters(
+    canister: &str,
+    network: &str,
+    count: usize,
+) -> Result<Vec<CanisterInstance>> {
     let mut dscvr_cfg = DSCVRConfig::try_new(network)?;
     let available_canisters = dscvr_cfg
         .add_available_canisters(canister, network, count)
         .map_err(|err| format!("{err}"))
         .into_instrumented_result()?;
     dscvr_cfg.write_config(network)?;
-    write_config(DEFAULT_DFX_CONFIG_PATH, &generate_dfx_json(dscvr_cfg, network)?)?;
+    write_config(
+        DEFAULT_DFX_CONFIG_PATH,
+        &generate_dfx_json(dscvr_cfg, network)?,
+    )?;
     Ok(available_canisters)
 }
 
@@ -116,15 +128,13 @@ pub fn augment_canister_ids(canister: &str, network: &str) -> Result<()> {
         .ids
         .into_iter()
         .map(|(name, canister_map)| {
-            let id = canister_map.into_iter().find_map(
-                |(network_name, id)| {
-                    if network_name == *network {
-                        Some(id)
-                    } else {
-                        None
-                    }
-                },
-            );
+            let id = canister_map.into_iter().find_map(|(network_name, id)| {
+                if network_name == *network {
+                    Some(id)
+                } else {
+                    None
+                }
+            });
             CanisterInstance { name, id }
         })
         .collect();

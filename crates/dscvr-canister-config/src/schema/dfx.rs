@@ -15,7 +15,9 @@ type Error = DfxGenerationError;
 pub enum DfxGenerationError {
     #[error("Controller Group {0} Specified for Canister {0} not found in DSCVRRoot")]
     ControllerGroupMismatch(String, String),
-    #[error("Controller Groups Specified for Canister {0} but no Controller Groups found in DSCVRRoot")]
+    #[error(
+        "Controller Groups Specified for Canister {0} but no Controller Groups found in DSCVRRoot"
+    )]
     ControllerGroupMissing(String),
 }
 
@@ -68,13 +70,23 @@ pub struct DfxCanister {
 
 impl DfxCanister {
     /// Return all the controllers for a network
-    pub fn get_all_controllers_for_network(&self, network_name: &str) -> Option<&ControllerIdentityMap> {
+    pub fn get_all_controllers_for_network(
+        &self,
+        network_name: &str,
+    ) -> Option<&ControllerIdentityMap> {
         self.controllers.as_ref()?.get(network_name)
     }
 
     /// Return the controller for this canister for a specific network.
-    pub fn get_controller(&self, network_name: &str, controller_type: &ControllerType) -> Option<&IdentityFromFile> {
-        self.controllers.as_ref()?.get(network_name)?.get(controller_type)
+    pub fn get_controller(
+        &self,
+        network_name: &str,
+        controller_type: &ControllerType,
+    ) -> Option<&IdentityFromFile> {
+        self.controllers
+            .as_ref()?
+            .get(network_name)?
+            .get(controller_type)
     }
 }
 
@@ -152,10 +164,21 @@ impl DfxConfig {
     fn init_canister_id_map(&mut self, path: &Path) -> Result<()> {
         self.process_canister_id_file(&path.parent().unwrap().join("canister_ids.json"))
             .ok();
-        let network_keys = self.networks.keys().map(|k| k.to_owned()).collect::<Vec<_>>();
+        let network_keys = self
+            .networks
+            .keys()
+            .map(|k| k.to_owned())
+            .collect::<Vec<_>>();
         for key in network_keys {
-            self.process_canister_id_file(&path.parent().unwrap().join(".dfx").join(key).join("canister_ids.json"))
-                .ok();
+            self.process_canister_id_file(
+                &path
+                    .parent()
+                    .unwrap()
+                    .join(".dfx")
+                    .join(key)
+                    .join("canister_ids.json"),
+            )
+            .ok();
         }
         Ok(())
     }
@@ -172,10 +195,13 @@ impl DfxConfig {
         for (name, val) in id_map {
             if let Some(canister) = self.canisters.get_mut(&name) {
                 for (network_name, id) in val {
-                    canister.network_id_map.entry(network_name.clone()).or_insert_with(|| {
-                        debug!("Added canister id {} for network {}", &id, &network_name);
-                        id
-                    });
+                    canister
+                        .network_id_map
+                        .entry(network_name.clone())
+                        .or_insert_with(|| {
+                            debug!("Added canister id {} for network {}", &id, &network_name);
+                            id
+                        });
                 }
             }
         }
@@ -184,7 +210,10 @@ impl DfxConfig {
     }
 
     #[tracing::instrument]
-    pub fn try_from_dscvr_for_network(root_file: DSCVRConfig, network: &str) -> std::result::Result<Self, Error> {
+    pub fn try_from_dscvr_for_network(
+        root_file: DSCVRConfig,
+        network: &str,
+    ) -> std::result::Result<Self, Error> {
         let mut canisters = HashMap::new();
         let mut networks = HashMap::new();
         for (canister_name, canister) in root_file.canisters {
@@ -192,14 +221,18 @@ impl DfxConfig {
             let network_controllers: Vec<(&str, Option<&String>)> = canister
                 .networks
                 .iter()
-                .map(|(network_name, network)| (network_name.as_str(), network.controllers.as_ref()))
+                .map(|(network_name, network)| {
+                    (network_name.as_str(), network.controllers.as_ref())
+                })
                 .collect();
             for (network_name, group_name) in network_controllers {
                 if group_name.is_some() {
                     let cg = root_file
                         .controller_groups
                         .as_ref()
-                        .ok_or_else(|| DfxGenerationError::ControllerGroupMissing(canister_name.to_string()))?
+                        .ok_or_else(|| {
+                            DfxGenerationError::ControllerGroupMissing(canister_name.to_string())
+                        })?
                         .get(group_name.unwrap())
                         .ok_or_else(|| {
                             DfxGenerationError::ControllerGroupMismatch(
@@ -211,10 +244,12 @@ impl DfxConfig {
                 }
             }
 
-            for (network_name, provider, instances, wallet) in canister.networks.iter().map(|(name, cfg)| {
-                let instances = cfg.get_all_instances();
-                (name, &cfg.provider, instances, cfg.wallet.as_ref())
-            }) {
+            for (network_name, provider, instances, wallet) in
+                canister.networks.iter().map(|(name, cfg)| {
+                    let instances = cfg.get_all_instances();
+                    (name, &cfg.provider, instances, cfg.wallet.as_ref())
+                })
+            {
                 // Only push the IC (production) canisters to dfx.json
                 if network_name == network {
                     for instance in instances {
@@ -230,7 +265,9 @@ impl DfxConfig {
                                 candid: canister.candid.clone(),
                                 wasm: canister.wasm.clone(),
                                 build: canister.build.clone(),
-                                supports_init_params: canister.supports_init_params.unwrap_or(false),
+                                supports_init_params: canister
+                                    .supports_init_params
+                                    .unwrap_or(false),
                                 supports_stable_storage_backup_restore: canister
                                     .supports_stable_storage_backup_restore
                                     .unwrap_or(false),

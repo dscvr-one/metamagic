@@ -41,8 +41,12 @@ impl DSCVRConfig {
             next_canister += 1;
         }
 
-        let mut available_instances =
-            std::mem::take(canister.available_instances.as_mut().unwrap_or(&mut Default::default()));
+        let mut available_instances = std::mem::take(
+            canister
+                .available_instances
+                .as_mut()
+                .unwrap_or(&mut Default::default()),
+        );
         available_instances.append(&mut new_canisters.clone());
 
         canister.available_instances = Some(available_instances);
@@ -68,7 +72,11 @@ impl DSCVRConfig {
     ) -> std::result::Result<(), Error> {
         let canister = self.get_canister_for_network_mut(canister_name, network)?;
         let available_instances = canister.available_instances.as_mut().ok_or_else(|| {
-            NoAvailableCanisterInstances(canister_name.to_string(), network.to_string(), "Register".to_string())
+            NoAvailableCanisterInstances(
+                canister_name.to_string(),
+                network.to_string(),
+                "Register".to_string(),
+            )
         })?;
         for canister_instance in canisters {
             if let Some(instance) = available_instances

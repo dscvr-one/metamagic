@@ -11,7 +11,8 @@ pub use crate::prelude::*;
 use crate::schema::dfx::ControllerIdentityMap;
 use crate::schema::dscvr::DSCVRGenerationError::MissingElement;
 use crate::schema::{
-    get_config, DEFAULT_DSCVR_CONFIG_PATH, LOCAL_DSCVR_CONFIG_PATH, LOCAL_NETWORK_NAME, PRODUCTION_NETWORK_NAME,
+    get_config, DEFAULT_DSCVR_CONFIG_PATH, LOCAL_DSCVR_CONFIG_PATH, LOCAL_NETWORK_NAME,
+    PRODUCTION_NETWORK_NAME,
 };
 
 pub(super) type Error = DSCVRGenerationError;
@@ -137,12 +138,20 @@ impl DSCVRConfig {
     //     self.get_canister_network(canister, network)?.get_available_instances()
     // }
     //
-    pub fn get_all_provisioned_instances(&self, canister: &str, network: &str) -> Option<Vec<CanisterInstance>> {
+    pub fn get_all_provisioned_instances(
+        &self,
+        canister: &str,
+        network: &str,
+    ) -> Option<Vec<CanisterInstance>> {
         self.get_canister_network(canister, network)?
             .get_provisioned_instances()
     }
 
-    pub fn get_all_instances(&self, canister: &str, network: &str) -> Option<Vec<CanisterInstance>> {
+    pub fn get_all_instances(
+        &self,
+        canister: &str,
+        network: &str,
+    ) -> Option<Vec<CanisterInstance>> {
         self.get_canister_network(canister, network)
             .map(|cn| cn.get_all_instances())
     }
@@ -151,7 +160,11 @@ impl DSCVRConfig {
         self.canisters.get(canister_name)
     }
 
-    pub fn get_canister_network(&self, canister_name: &str, network: &str) -> Option<&CanisterNetwork> {
+    pub fn get_canister_network(
+        &self,
+        canister_name: &str,
+        network: &str,
+    ) -> Option<&CanisterNetwork> {
         self.get_canister(canister_name)?.networks.get(network)
     }
 
@@ -179,18 +192,25 @@ impl DSCVRConfig {
             .networks
             .get(network)
             .ok_or_else(|| {
-                format!("Network {network} does not exist for canister {canister_name}").into_instrumented_error()
+                format!("Network {network} does not exist for canister {canister_name}")
+                    .into_instrumented_error()
             })?
             .controllers
             .as_ref()
             .ok_or_else(|| {
-                format!("Controllers group not listed on {canister_name}:{network}").into_instrumented_error()
+                format!("Controllers group not listed on {canister_name}:{network}")
+                    .into_instrumented_error()
             })?;
         self.controller_groups
             .as_ref()
-            .ok_or_else(|| String::from("No controller groups listed in document root").into_instrumented_error())?
+            .ok_or_else(|| {
+                String::from("No controller groups listed in document root")
+                    .into_instrumented_error()
+            })?
             .get(controller_group)
-            .ok_or_else(|| format!("No ControllerGroup found for {canister_name}:{network}:{controller_group}"))
+            .ok_or_else(|| {
+                format!("No ControllerGroup found for {canister_name}:{network}:{controller_group}")
+            })
             .into_instrumented_result()
     }
 
@@ -503,8 +523,12 @@ mod test {
         };
 
         society_rs.networks.insert("ic".to_string(), society_rs_ic);
-        society_rs.networks.insert("staging".to_string(), society_rs_staging);
-        society_rs.networks.insert("local".to_string(), society_rs_local);
+        society_rs
+            .networks
+            .insert("staging".to_string(), society_rs_staging);
+        society_rs
+            .networks
+            .insert("local".to_string(), society_rs_local);
 
         let mut event_router = Canister {
             networks: Default::default(),
@@ -545,14 +569,20 @@ mod test {
             wallet: None,
         };
 
-        event_router.networks.insert("ic".to_string(), event_router_ic);
+        event_router
+            .networks
+            .insert("ic".to_string(), event_router_ic);
         event_router
             .networks
             .insert("staging".to_string(), event_router_staging);
-        event_router.networks.insert("local".to_string(), event_router_local);
+        event_router
+            .networks
+            .insert("local".to_string(), event_router_local);
 
         dscvr_config.controller_groups = Some(controller_groups);
-        dscvr_config.canisters.insert("society_rs".to_string(), society_rs);
+        dscvr_config
+            .canisters
+            .insert("society_rs".to_string(), society_rs);
         dscvr_config
             .canisters
             .insert("dscvr-event-router".to_string(), event_router);
@@ -561,14 +591,16 @@ mod test {
         let writer = BufWriter::new(std::fs::File::create(path).expect("Able to create file"));
         serde_json::to_writer(writer, &dscvr_config).expect("File written");
 
-        let config =
-            serde_json::from_reader::<_, DSCVRConfig>(BufReader::new(std::fs::File::open(path).expect("File exists")));
+        let config = serde_json::from_reader::<_, DSCVRConfig>(BufReader::new(
+            std::fs::File::open(path).expect("File exists"),
+        ));
         assert!(config.is_ok());
         let config = config.unwrap();
         assert_eq!(config.controller_groups, dscvr_config.controller_groups);
         assert_eq!(config.canisters, dscvr_config.canisters);
 
-        let dfx = crate::schema::dfx::DfxConfig::try_from_dscvr_for_network(dscvr_config, "ic").unwrap();
+        let dfx =
+            crate::schema::dfx::DfxConfig::try_from_dscvr_for_network(dscvr_config, "ic").unwrap();
         crate::schema::write_config("./dfx.json", &dfx).unwrap();
     }
 

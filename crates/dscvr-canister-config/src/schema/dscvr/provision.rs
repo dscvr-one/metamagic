@@ -28,14 +28,16 @@ impl DSCVRConfig {
         let canister = self.get_canister_for_network_mut(canister_name, network)?;
         let mut instance_to_provision = vec![];
         let available_instances = canister.available_instances.as_mut().ok_or_else(|| {
-            NoAvailableCanisterInstances(canister_name.to_string(), network.to_string(), "Provision".to_string())
+            NoAvailableCanisterInstances(
+                canister_name.to_string(),
+                network.to_string(),
+                "Provision".to_string(),
+            )
         })?;
         while instance_to_provision.len() < count {
-            instance_to_provision.push(
-                available_instances
-                    .pop()
-                    .ok_or_else(|| ProvisionError("Not enough available canisters to provision".to_string()))?,
-            );
+            instance_to_provision.push(available_instances.pop().ok_or_else(|| {
+                ProvisionError("Not enough available canisters to provision".to_string())
+            })?);
         }
 
         let instances_provisioned = instance_to_provision.clone();

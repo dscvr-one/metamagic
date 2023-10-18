@@ -15,7 +15,11 @@ pub trait AgentImpl: Sync + Send {
 
     async fn query(&self, canister_id: &Principal, method: &str, args: &[u8]) -> Result<Vec<u8>>;
 
-    async fn read_state_canister_info(&self, canister_id: &Principal, prop: &str) -> Result<Vec<u8>>;
+    async fn read_state_canister_info(
+        &self,
+        canister_id: &Principal,
+        prop: &str,
+    ) -> Result<Vec<u8>>;
 
     async fn clone_with_identity(&self, identity: Arc<dyn Identity>) -> Result<Arc<dyn AgentImpl>>;
 
