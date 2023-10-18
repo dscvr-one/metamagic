@@ -29,7 +29,9 @@ fn is_tuple(fs: &[candid::types::Field]) -> bool {
     if fs.is_empty() {
         return false;
     }
-    !fs.iter().enumerate().any(|(i, field)| field.id.get_id() != (i as u32))
+    !fs.iter()
+        .enumerate()
+        .any(|(i, field)| field.id.get_id() != (i as u32))
 }
 
 fn q_ident(id: &str) -> (Ident, bool) {
@@ -74,7 +76,11 @@ fn q_record_field(field: &candid::types::Field, recs: &BTreeSet<&str>) -> TokenS
     quote!(pub #field_name : #type_)
 }
 
-fn q_record_fields(fs: &[candid::types::Field], recs: &BTreeSet<&str>, make_pub: bool) -> TokenStream {
+fn q_record_fields(
+    fs: &[candid::types::Field],
+    recs: &BTreeSet<&str>,
+    make_pub: bool,
+) -> TokenStream {
     if is_tuple(fs) {
         let fields = fs.iter().map(|f| q_ty(&f.ty, recs));
         // We want to make fields on a tuple public
@@ -231,7 +237,10 @@ fn generate_types(env: &TypeEnv, def_list: &[&str], recs: &BTreeSet<&str>) -> Re
                     )
                 }
                 TypeInner::Variant(fs) => {
-                    if fs.iter().any(|f| f.id.to_string() == "Ok" || f.id.to_string() == "Err") {
+                    if fs
+                        .iter()
+                        .any(|f| f.id.to_string() == "Ok" || f.id.to_string() == "Err")
+                    {
                         let rets = fs.iter().map(|f| q_ty(&f.ty, &BTreeSet::default()));
                         quote!(
                             pub type #name = std::result::Result<#(#rets),*>;
@@ -270,7 +279,9 @@ fn path_to_var(path: &[TypePath]) -> String {
         .iter()
         .map(|node| match node {
             TypePath::Id(id) => id.to_string(),
-            TypePath::RecordField(f) | TypePath::VariantField(f) => f.to_string().to_case(Case::Title),
+            TypePath::RecordField(f) | TypePath::VariantField(f) => {
+                f.to_string().to_case(Case::Title)
+            }
             TypePath::Opt => "Inner".to_owned(),
             TypePath::Vec => "Item".to_owned(),
             TypePath::Func(id) => id.to_string(),
@@ -307,7 +318,10 @@ fn nominalize(env: &mut TypeEnv, path: &mut Vec<TypePath>, t: Type) -> Type {
                         path.push(TypePath::RecordField(id.to_string()));
                         let ty = nominalize(env, path, ty.to_owned());
                         path.pop();
-                        Field { id: id.to_owned(), ty }
+                        Field {
+                            id: id.to_owned(),
+                            ty,
+                        }
                     })
                     .collect();
                 TypeInner::Record(fs).into()
@@ -330,7 +344,10 @@ fn nominalize(env: &mut TypeEnv, path: &mut Vec<TypePath>, t: Type) -> Type {
                         path.push(TypePath::VariantField(id.to_string()));
                         let ty = nominalize(env, path, ty.to_owned());
                         path.pop();
-                        Field { id: id.to_owned(), ty }
+                        Field {
+                            id: id.to_owned(),
+                            ty,
+                        }
                     })
                     .collect();
                 TypeInner::Variant(fs).into()
@@ -405,7 +422,9 @@ fn nominalize_all(env: &TypeEnv, actor: &Option<Type>) -> (TypeEnv, Option<Type>
         let ty = nominalize(&mut res, &mut vec![TypePath::Id(id.clone())], ty.clone());
         res.0.insert(id.to_string(), ty);
     }
-    let actor = actor.as_ref().map(|ty| nominalize(&mut res, &mut vec![], ty.clone()));
+    let actor = actor
+        .as_ref()
+        .map(|ty| nominalize(&mut res, &mut vec![], ty.clone()));
     (res, actor)
 }
 
@@ -430,7 +449,11 @@ fn generate_file(path: &Path, tokens: TokenStream) -> Result<()> {
 
 #[tracing::instrument]
 pub fn generate(did: &Path, output: &Path) -> Result<BTreeSet<PathBuf>> {
-    let CheckFileResult { types, actor, imports } = candid::parser::typing::check_file_with_options(
+    let CheckFileResult {
+        types,
+        actor,
+        imports,
+    } = candid::parser::typing::check_file_with_options(
         did,
         &CheckFileOptions {
             pretty_errors: false,
