@@ -24,4 +24,4 @@ ic-canister-io = { path = "../ic-canister-io" }
 instrumented-error = { path = "../instrumented-error" }
 
 [dev-dependencies]
-tokio.workspace = true
+tokio = { workspace = true, features = ["rt", "macros"] }
