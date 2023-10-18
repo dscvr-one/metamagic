@@ -1,0 +1,16 @@
+[package]
+name = "ic-canister-logger"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ic-cdk.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+dscvr-interface = { path = "../dscvr-interface" }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+time.workspace = true

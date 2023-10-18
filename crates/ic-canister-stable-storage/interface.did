@@ -1,0 +1,28 @@
+type DataFormatType = variant {
+    Unknown;
+    MsgPack;
+    Bincode;
+};
+
+type StableStorageHeader = record {
+    header_length: nat64;
+    content_length: nat64;
+    content_format: DataFormatType;
+    content_schema_version: nat64;
+    pre_upgrade_instruction_count: nat64;
+};
+
+type StableStorageTransient = record {
+    skip_next_save: bool;
+    post_upgrade_instruction_count: nat64;
+};
+
+service : {
+    backup_stable_storage: (nat64, nat64) -> (vec nat8) query;
+    stable_storage_info: () -> (StableStorageHeader, StableStorageTransient) query;
+
+    restore_stable_storage: (nat64, vec nat8) -> ();
+    restore_stable_storage_compressed: (nat64, vec vec nat8) -> ();
+    set_restore_from_stable_storage: (bool) -> ();
+    init_stable_storage: (nat64) -> ();
+}

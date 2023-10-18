@@ -42,7 +42,12 @@ impl Display for BoxedInstrumentedError {
 
 impl<E> From<E> for BoxedInstrumentedError
 where
-    E: InstrumentError<Instrumented = TracedError<E>> + std::error::Error + 'static + Send + Sync + Sized,
+    E: InstrumentError<Instrumented = TracedError<E>>
+        + std::error::Error
+        + 'static
+        + Send
+        + Sync
+        + Sized,
 {
     #[inline]
     fn from(val: E) -> Self {
