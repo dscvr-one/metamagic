@@ -13,6 +13,7 @@ members = [
     "crates/ic-canister-logger",
     "crates/ic-canister-stable-storage",
     "crates/ic-identity-util",
+    "crates/ic-ingress-validator-util",
     "crates/ic-rc-principal",
     "crates/instrumented-error",
 ]
@@ -25,7 +26,7 @@ bincode = "1.3"
 candid = { git = "https://github.com/dscvr-one/candid.git", rev = "65d73d6", features = [
     "parser",
 ] }
-convert_case = "0.1"
+convert_case = "0.6"
 deepsize = { git = "https://github.com/dscvr-one/deepsize.git", rev = "822ba27", features = [
     "candid",
     "serde_bytes",
