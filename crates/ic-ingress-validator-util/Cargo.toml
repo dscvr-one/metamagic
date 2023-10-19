@@ -7,12 +7,12 @@ edition = "2021"
 
 [dependencies]
 ic-agent.workspace = true
-ic-crypto-utils-threshold-sig-der = { git = "https://github.com/dscvr-one/ic.git", rev = "cacda1", package = "ic-crypto-utils-threshold-sig-der" }
-ic-error-types = { git = "https://github.com/dscvr-one/ic.git", rev = "cacda1", package = "ic-error-types" }
-ic-http-endpoints-public = { git = "https://github.com/dscvr-one/ic.git", rev = "cacda1", package = "ic-http-endpoints-public" }
-ic-interfaces = { git = "https://github.com/dscvr-one/ic.git", rev = "cacda1", package = "ic-interfaces" }
-ic-types = { git = "https://github.com/dscvr-one/ic.git", rev = "cacda1", package = "ic-types" }
-ic-validator-ingress-message = { git = "https://github.com/dscvr-one/ic.git", rev = "cacda1", package = "ic-validator-ingress-message" }
+ic-crypto-utils-threshold-sig-der = { git = "https://github.com/dscvr-one/ic.git", rev = "ed9a6915", package = "ic-crypto-utils-threshold-sig-der" }
+ic-error-types = { git = "https://github.com/dscvr-one/ic.git", rev = "ed9a6915", package = "ic-error-types" }
+ic-http-endpoints-public = { git = "https://github.com/dscvr-one/ic.git", rev = "ed9a6915", package = "ic-http-endpoints-public" }
+ic-interfaces = { git = "https://github.com/dscvr-one/ic.git", rev = "ed9a6915", package = "ic-interfaces" }
+ic-types = { git = "https://github.com/dscvr-one/ic.git", rev = "ed9a6915", package = "ic-types" }
+ic-validator-ingress-message = { git = "https://github.com/dscvr-one/ic.git", rev = "ed9a6915", package = "ic-validator-ingress-message" }
 
 ic-identity-util = { path = "../ic-identity-util" }
 instrumented-error = { path = "../instrumented-error" }
