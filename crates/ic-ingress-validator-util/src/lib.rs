@@ -1,7 +1,9 @@
 use ic_crypto_utils_threshold_sig_der::parse_threshold_sig_key_from_der;
-use ic_validator_ingress_message::IngressMessageVerifier;
 use instrumented_error::Result;
 use std::sync::Arc;
+
+pub use ic_interfaces::crypto::IngressSigVerifier;
+pub use ic_validator_ingress_message::IngressMessageVerifier;
 
 pub async fn init_ingress_verifier(url: &str) -> Result<IngressMessageVerifier> {
     use ic_agent::agent::http_transport::ReqwestHttpReplicaV2Transport;
