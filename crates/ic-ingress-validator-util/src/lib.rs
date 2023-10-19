@@ -5,7 +5,7 @@ use std::sync::Arc;
 pub use ic_interfaces::crypto::IngressSigVerifier;
 pub use ic_validator_ingress_message::IngressMessageVerifier;
 
-pub async fn new_ingress_verifier(url: &str) -> Result<IngressMessageVerifier> {
+pub async fn try_new_ingress_verifier(url: &str) -> Result<IngressMessageVerifier> {
     use ic_agent::agent::http_transport::ReqwestHttpReplicaV2Transport;
     use ic_agent::identity::AnonymousIdentity;
     use ic_agent::Agent;
