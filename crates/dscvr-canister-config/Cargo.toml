@@ -1,0 +1,16 @@
+[package]
+name = "dscvr-canister-config"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+candid.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+ic-identity-util = { path = "../ic-identity-util" }
+instrumented-error = { path = "../instrumented-error" }

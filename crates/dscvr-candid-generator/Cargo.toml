@@ -1,0 +1,16 @@
+[package]
+name = "dscvr-candid-generator"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+candid.workspace = true
+convert_case.workspace = true
+prettyplease = "0.2"
+quote = "1.0"
+syn = { version = "2.0", features = ["full"] }
+tracing.workspace = true
+
+instrumented-error = { path = "../instrumented-error" }
