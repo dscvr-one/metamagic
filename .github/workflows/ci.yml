@@ -16,6 +16,8 @@ concurrency:
 
 jobs:
   build:
+    runs-on:
+      group: rust-heavy
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
