@@ -1,0 +1,10 @@
+[package]
+name = "dscvr-telemetry-util"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.6"
+http = "0.2"
+metrics = "0.21"
+metrics-exporter-prometheus = "0.13"

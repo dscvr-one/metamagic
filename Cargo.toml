@@ -7,6 +7,7 @@ members = [
     "crates/dscvr-canister-config",
     "crates/dscvr-canister-exports",
     "crates/dscvr-interface",
+    "crates/dscvr-telemetry-util",
     "crates/dscvr-tracing-util",
     "crates/ic-canister-io",
     "crates/ic-canister-logger",
