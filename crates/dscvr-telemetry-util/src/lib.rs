@@ -1,20 +1,30 @@
+pub use axum::AXUM_HTTP_REQUESTS_DURATION_SECONDS;
+pub use axum::AXUM_HTTP_REQUESTS_TOTAL;
+
+pub const IC_REPLICA_REQUESTS_TOTAL: &str = "ic-replica-requests-total";
+pub const IC_REPLICA_REQUESTS_DURATION_SECONDS: &str = "ic-replica-requests-duration-seconds";
+
 pub mod axum {
     use axum::{extract::MatchedPath, middleware::Next, response::Response, routing::get, Router};
     use http::Request;
     use metrics_exporter_prometheus::{BuildError, Matcher, PrometheusBuilder};
     use std::time::Instant;
 
+    pub const AXUM_HTTP_REQUESTS_TOTAL: &str = "axum-http-requests-total";
+    pub const AXUM_HTTP_REQUESTS_DURATION_SECONDS: &str = "axum-http-requests-duration-seconds";
+
     // Takes an existing axum router, installs the prometheus metrics recorder and
     // injects the metrics endpoint into the router after the handler layer is installed so that
     // `/metrics` route itself is not included in the routing layer metrics measured
-    pub fn install_metrics_layer<K, V>(
-        app: Router,
+    pub fn install_metrics_layer<K, S, V>(
+        app: Router<S>,
         global_buckets: Option<&[f64]>,
         global_labels: Option<Vec<(K, V)>>,
         matched_metric_buckets: Option<Vec<(Matcher, &[f64])>>,
-    ) -> Result<Router, BuildError>
+    ) -> Result<Router<S>, BuildError>
     where
         K: Into<String>,
+        S: Clone + Send + Sync + 'static,
         V: Into<String>,
     {
         let builder = PrometheusBuilder::new();
@@ -70,8 +80,8 @@ pub mod axum {
                 ("status", status),
             ];
 
-            metrics::counter!("axum-http-requests-total", &labels).increment(1);
-            metrics::histogram!("axum-http-requests-duration-seconds", &labels).record(latency);
+            metrics::increment_counter!(AXUM_HTTP_REQUESTS_TOTAL, &labels);
+            metrics::histogram!(AXUM_HTTP_REQUESTS_DURATION_SECONDS, latency, &labels);
         }
 
         response
