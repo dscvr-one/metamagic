@@ -4,31 +4,35 @@ pub mod axum {
     use metrics_exporter_prometheus::{BuildError, PrometheusBuilder};
     use std::time::Instant;
 
+    pub const AXUM_HTTP_REQUESTS_TOTAL: &str = "axum-http-requests-total";
+    pub const AXUM_HTTP_REQUESTS_DURATION_SECONDS: &str = "axum-http-requests-duration-seconds";
+
     // Takes an existing axum router, installs the prometheus metrics recorder and
     // injects the metrics endpoint into the router after the handler layer is installed so that
     // `/metrics` route itself is not included in the routing layer metrics measured
     pub fn install_metrics_layer<K, V>(
         app: Router,
-        bucket_vals: Option<&[f64]>,
-        global_labels: Option<Vec<(K, V)>>
+        builder: PrometheusBuilder,
+        // bucket_vals: Option<&[f64]>,
+        // global_labels: Option<Vec<(K, V)>>
     ) -> Result<Router, BuildError>
     where
         K: Into<String>,
         V: Into<String>,
     {
-        let builder = PrometheusBuilder::new();
+        //carlet builder = PrometheusBuilder::new();
 
-        let builder = if let Some(buckets) = bucket_vals {
-            builder.set_buckets(buckets)?
-        } else {
-            builder
-        };
+        // let builder = if let Some(buckets) = bucket_vals {
+        //     builder.set_buckets(buckets)?
+        // } else {
+        //     builder
+        // };
 
-        let builder = if let Some(labels) = global_labels {
-            labels.into_iter().
-        } else {
-            builder
-        };
+        // let builder: PrometheusBuilder = if let Some(labels) = global_labels {
+        //     labels.into_iter().
+        // } else {
+        //     builder
+        // };
 
         let handle = builder.install_recorder()?;
         Ok(app
@@ -59,8 +63,8 @@ pub mod axum {
                 ("status", status),
             ];
 
-            metrics::counter!("axum-http-requests-total", &labels).increment(1);
-            metrics::histogram!("axum-http-requests-duration-seconds", &labels).record(latency);
+            metrics::counter!(AXUM_HTTP_REQUESTS_TOTAL, &labels).increment(1);
+            metrics::histogram!(AXUM_HTTP_REQUESTS_DURATION_SECONDS, &labels).record(latency);
         }
 
         response
