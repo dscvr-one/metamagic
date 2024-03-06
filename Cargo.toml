@@ -57,6 +57,4 @@ tracing-stackdriver = "0.8"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [patch.crates-io]
-candid = { git = "https://github.com/dscvr-one/candid.git", rev = "0.9.3-3", features = [
-    "deepsize",
-] }
+candid = { git = "https://github.com/dscvr-one/candid.git", rev = "0.9.3-3" }
