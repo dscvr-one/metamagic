@@ -1,11 +1,14 @@
 pub mod axum {
     use axum::{extract::MatchedPath, middleware::Next, response::Response, routing::get, Router};
     use http::Request;
-    use metrics_exporter_prometheus::{BuildError, PrometheusBuilder};
+    use metrics_exporter_prometheus::BuildError;
     use std::time::Instant;
+
+    pub use metrics_exporter_prometheus::PrometheusBuilder;
 
     pub const AXUM_HTTP_REQUESTS_TOTAL: &str = "axum-http-requests-total";
     pub const AXUM_HTTP_REQUESTS_DURATION_SECONDS: &str = "axum-http-requests-duration-seconds";
+
 
     // Takes an existing axum router, installs the prometheus metrics recorder and
     // injects the metrics endpoint into the router after the handler layer is installed so that
