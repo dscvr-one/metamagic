@@ -12,6 +12,9 @@ impl CanisterAgent {
         Stats: candid::CandidType,
     {
         let bytes = Encode!()?;
-        Ok(Decode!(self.query("stats", bytes).await?.as_slice(), Stats)?)
+        Ok(Decode!(
+            self.query("stats", bytes).await?.as_slice(),
+            Stats
+        )?)
     }
 }

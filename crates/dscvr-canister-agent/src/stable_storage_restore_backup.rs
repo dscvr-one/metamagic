@@ -5,7 +5,9 @@ use async_stream::try_stream;
 use candid::Encode;
 use futures::TryStreamExt;
 use futures::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt, SinkExt};
-use ic_canister_stable_storage::{data_format::DataFormatType, header::Header, transient::Transient};
+use ic_canister_stable_storage::{
+    data_format::DataFormatType, header::Header, transient::Transient,
+};
 use instrumented_error::{BoxedInstrumentedError, Result};
 use serde_bytes::{ByteBuf, Bytes};
 use tokio_retry::strategy::{jitter, ExponentialBackoff};
@@ -55,7 +57,11 @@ impl CanisterAgent {
         debug!("Fetching {} of {}", offset, len);
 
         let bytes = Encode!(&offset, &std::cmp::min(BACKUP_CHUNK_SIZE, len - offset))?;
-        Ok(Decode!(self.query("backup_stable_storage", bytes).await?.as_slice(), ByteBuf)?.into_vec())
+        Ok(Decode!(
+            self.query("backup_stable_storage", bytes).await?.as_slice(),
+            ByteBuf
+        )?
+        .into_vec())
     }
 
     /// Backup the stable storage of a canister to a writer
@@ -85,7 +91,11 @@ impl CanisterAgent {
                 }
                 item
             })
-            .forward((&mut writer).into_sink().sink_err_into::<BoxedInstrumentedError>())
+            .forward(
+                (&mut writer)
+                    .into_sink()
+                    .sink_err_into::<BoxedInstrumentedError>(),
+            )
             .await?;
         let len = len as usize;
         if total_written != len {
@@ -99,7 +109,11 @@ impl CanisterAgent {
 
     /// Restore the stable storage of a canister from a reader
     #[tracing::instrument(skip_all)]
-    pub async fn restore_stable_storage<R>(&self, mut reader: R, restore_offest: Option<u64>) -> Result<()>
+    pub async fn restore_stable_storage<R>(
+        &self,
+        mut reader: R,
+        restore_offest: Option<u64>,
+    ) -> Result<()>
     where
         R: AsyncReadExt + AsyncRead + Unpin + Send + 'static,
     {
@@ -153,18 +167,26 @@ impl CanisterAgent {
 
         {
             let bytes = candid::Encode!(&true)?;
-            self.update("set_restore_from_stable_storage", bytes).await?;
+            self.update("set_restore_from_stable_storage", bytes)
+                .await?;
         }
 
         Ok(())
     }
 
-    async fn restore(self: CanisterAgent, bytes: Arc<Vec<u8>>, len: u64, offset: u64) -> Result<()> {
+    async fn restore(
+        self: CanisterAgent,
+        bytes: Arc<Vec<u8>>,
+        len: u64,
+        offset: u64,
+    ) -> Result<()> {
         debug!("Restoring {} of {}", offset, len);
 
         let ret = {
             let encoded = candid::Encode!(&offset, &Bytes::new(&bytes[..]))?;
-            self.update("restore_stable_storage", encoded).await.map(|_| ())
+            self.update("restore_stable_storage", encoded)
+                .await
+                .map(|_| ())
         };
 
         if let Err(e) = ret.as_ref() {
@@ -178,7 +200,10 @@ impl CanisterAgent {
 
     /// Return the default file name to be used for stable storage backups
     /// Note: This makes a network call to retrieve the module hash of the canister.
-    pub async fn get_default_stable_storage_backup_file_name(&self, prefix: &str) -> Result<String> {
+    pub async fn get_default_stable_storage_backup_file_name(
+        &self,
+        prefix: &str,
+    ) -> Result<String> {
         let stats = self.canister_stats::<CanisterStats>().await?;
         let hash = hex::encode(self.canister_module_hash().await?);
         let time = OffsetDateTime::from_unix_timestamp_nanos(stats.last_upgraded as i128)?;
@@ -186,8 +211,10 @@ impl CanisterAgent {
             "{}_{}_{}",
             prefix,
             &hash[0..5],
-            time.format(format_description!("[year]-[month]-[day]_[hour]-[minute]-[second]"))
-                .unwrap()
+            time.format(format_description!(
+                "[year]-[month]-[day]_[hour]-[minute]-[second]"
+            ))
+            .unwrap()
         ))
     }
 }
