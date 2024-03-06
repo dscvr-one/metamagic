@@ -1,5 +1,4 @@
-pub use axum::AXUM_HTTP_REQUESTS_DURATION_SECONDS;
-pub use axum::AXUM_HTTP_REQUESTS_TOTAL;
+pub use axum::{Matcher, AXUM_HTTP_REQUESTS_DURATION_SECONDS, AXUM_HTTP_REQUESTS_TOTAL};
 
 pub const IC_REPLICA_REQUESTS_TOTAL: &str = "ic-replica-requests-total";
 pub const IC_REPLICA_REQUESTS_DURATION_SECONDS: &str = "ic-replica-requests-duration-seconds";
@@ -7,8 +6,10 @@ pub const IC_REPLICA_REQUESTS_DURATION_SECONDS: &str = "ic-replica-requests-dura
 pub mod axum {
     use axum::{extract::MatchedPath, middleware::Next, response::Response, routing::get, Router};
     use http::Request;
-    use metrics_exporter_prometheus::{BuildError, Matcher, PrometheusBuilder};
+    use metrics_exporter_prometheus::{BuildError, PrometheusBuilder};
     use std::time::Instant;
+
+    pub use metrics_exporter_prometheus::Matcher;
 
     pub const AXUM_HTTP_REQUESTS_TOTAL: &str = "axum-http-requests-total";
     pub const AXUM_HTTP_REQUESTS_DURATION_SECONDS: &str = "axum-http-requests-duration-seconds";
