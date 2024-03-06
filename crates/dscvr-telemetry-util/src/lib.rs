@@ -10,7 +10,7 @@ pub mod axum {
     pub fn install_metrics_layer<K, V>(
         app: Router,
         bucket_vals: Option<&[f64]>,
-        global_labels: Option<Vec<(K, V)>>
+        global_labels: Option<Vec<(K, V)>>,
     ) -> Result<Router, BuildError>
     where
         K: Into<String>,
@@ -25,7 +25,9 @@ pub mod axum {
         };
 
         let builder = if let Some(labels) = global_labels {
-            labels.into_iter().
+            labels
+                .into_iter()
+                .fold(builder, |b, (k, v)| b.add_global_label(k, v))
         } else {
             builder
         };
