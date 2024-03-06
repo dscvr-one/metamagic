@@ -1,7 +1,7 @@
 pub mod axum {
     use axum::{extract::MatchedPath, middleware::Next, response::Response, routing::get, Router};
     use http::Request;
-    use metrics_exporter_prometheus::{BuildError, PrometheusBuilder};
+    use metrics_exporter_prometheus::{BuildError, Matcher, PrometheusBuilder};
     use std::time::Instant;
 
     // Takes an existing axum router, installs the prometheus metrics recorder and
@@ -9,8 +9,9 @@ pub mod axum {
     // `/metrics` route itself is not included in the routing layer metrics measured
     pub fn install_metrics_layer<K, V>(
         app: Router,
-        bucket_vals: Option<&[f64]>,
+        global_buckets: Option<&[f64]>,
         global_labels: Option<Vec<(K, V)>>,
+        matched_metric_buckets: Option<Vec<(Matcher, &[f64])>>,
     ) -> Result<Router, BuildError>
     where
         K: Into<String>,
@@ -18,7 +19,7 @@ pub mod axum {
     {
         let builder = PrometheusBuilder::new();
 
-        let builder = if let Some(buckets) = bucket_vals {
+        let builder = if let Some(buckets) = global_buckets {
             builder.set_buckets(buckets)?
         } else {
             builder
@@ -28,6 +29,14 @@ pub mod axum {
             labels
                 .into_iter()
                 .fold(builder, |b, (k, v)| b.add_global_label(k, v))
+        } else {
+            builder
+        };
+
+        let builder = if let Some(buckets) = matched_metric_buckets {
+            buckets
+                .into_iter()
+                .try_fold(builder, |b, (k, v)| b.set_buckets_for_metric(k, v))?
         } else {
             builder
         };
