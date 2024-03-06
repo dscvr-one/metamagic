@@ -21,11 +21,6 @@ jobs:
     container: dscvrdocker/be-edge-base-builder
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: ${{ env.RUST_VERSION }}
-      - uses: jwlawson/actions-setup-cmake@v1.13
       - name: Run
         run: ./build-scripts/build_and_test.sh
         env:
