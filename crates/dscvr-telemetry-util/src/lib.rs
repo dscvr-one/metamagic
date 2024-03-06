@@ -7,8 +7,30 @@ pub mod axum {
     // Takes an existing axum router, installs the prometheus metrics recorder and
     // injects the metrics endpoint into the router after the handler layer is installed so that
     // `/metrics` route itself is not included in the routing layer metrics measured
-    pub fn install_axum_metrics(app: Router) -> Result<Router, BuildError> {
-        let handle = PrometheusBuilder::new().install_recorder()?;
+    pub fn install_metrics_layer<K, V>(
+        app: Router,
+        bucket_vals: Option<&[f64]>,
+        global_labels: Option<Vec<(K, V)>>
+    ) -> Result<Router, BuildError>
+    where
+        K: Into<String>,
+        V: Into<String>,
+    {
+        let builder = PrometheusBuilder::new();
+
+        let builder = if let Some(buckets) = bucket_vals {
+            builder.set_buckets(buckets)?
+        } else {
+            builder
+        };
+
+        let builder = if let Some(labels) = global_labels {
+            labels.into_iter().
+        } else {
+            builder
+        };
+
+        let handle = builder.install_recorder()?;
         Ok(app
             .route_layer(axum::middleware::from_fn(track_metrics))
             .route("/metrics", get(|| async move { handle.render() })))
