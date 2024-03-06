@@ -9,7 +9,6 @@ pub mod axum {
     pub const AXUM_HTTP_REQUESTS_TOTAL: &str = "axum-http-requests-total";
     pub const AXUM_HTTP_REQUESTS_DURATION_SECONDS: &str = "axum-http-requests-duration-seconds";
 
-
     // Takes an existing axum router, installs the prometheus metrics recorder and
     // injects the metrics endpoint into the router after the handler layer is installed so that
     // `/metrics` route itself is not included in the routing layer metrics measured
