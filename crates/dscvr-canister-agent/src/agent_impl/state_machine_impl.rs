@@ -18,12 +18,7 @@ impl AgentImpl for WrappedStateMachine {
     async fn query(&self, canister_id: &Principal, method: &str, args: &[u8]) -> Result<Vec<u8>> {
         let state_machine = self.machine.lock().unwrap();
         match state_machine
-            .query_call(
-                canister_id.to_owned(),
-                self.caller.to_owned(),
-                method,
-                args.to_owned(),
-            )
+            .query_call(canister_id.to_owned(), self.caller.to_owned(), method, args.to_owned())
             .map_err(|e| e.to_string().into_instrumented_error())?
         {
             WasmResult::Reply(reply) => Ok(reply),
@@ -34,12 +29,7 @@ impl AgentImpl for WrappedStateMachine {
     async fn update(&self, canister_id: &Principal, method: &str, args: &[u8]) -> Result<Vec<u8>> {
         let state_machine = self.machine.lock().unwrap();
         match state_machine
-            .update_call(
-                canister_id.to_owned(),
-                self.caller.to_owned(),
-                method,
-                args.to_owned(),
-            )
+            .update_call(canister_id.to_owned(), self.caller.to_owned(), method, args.to_owned())
             .map_err(|e| e.to_string().into_instrumented_error())?
         {
             WasmResult::Reply(reply) => Ok(reply),
@@ -59,20 +49,12 @@ impl AgentImpl for WrappedStateMachine {
         }))
     }
 
-    async fn read_state_canister_info(
-        &self,
-        _canister_id: &Principal,
-        _prop: &str,
-    ) -> Result<Vec<u8>> {
+    async fn read_state_canister_info(&self, _canister_id: &Principal, _prop: &str) -> Result<Vec<u8>> {
         unimplemented!()
     }
 }
 
-pub fn new(
-    caller: Principal,
-    wasm: Vec<u8>,
-    init_arguments: Vec<u8>,
-) -> Result<(Arc<dyn AgentImpl>, Principal)> {
+pub fn new(caller: Principal, wasm: Vec<u8>, init_arguments: Vec<u8>) -> Result<(Arc<dyn AgentImpl>, Principal)> {
     // TODO: for multi-canister WrappedStateMachine needs to be a singleton
     let machine = Arc::new(Mutex::new(StateMachine::new(
         &std::env::var("STATE_MACHINE_BINARY_PATH").expect("valid state machine binary path"),

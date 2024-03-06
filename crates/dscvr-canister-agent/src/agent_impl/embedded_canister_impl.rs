@@ -26,14 +26,13 @@ where
     State: std::marker::Send + 'static,
 {
     async fn update(&self, canister_id: &Principal, method: &str, args: &[u8]) -> Result<Vec<u8>> {
-        let method: &CanisterUpdateMethod<State> =
-            self.canister.update_methods.get(method).ok_or_else(|| {
-                format!(
-                    "Canister {} does not have an update method named {}",
-                    canister_id, method
-                )
-                .into_instrumented_error()
-            })?;
+        let method: &CanisterUpdateMethod<State> = self.canister.update_methods.get(method).ok_or_else(|| {
+            format!(
+                "Canister {} does not have an update method named {}",
+                canister_id, method
+            )
+            .into_instrumented_error()
+        })?;
 
         let mut locked_state: std::sync::MutexGuard<State> = self.state.lock().expect("valid");
         let system = Edge::new_with_caller_and_time(self.caller, None);
@@ -47,27 +46,21 @@ where
     }
 
     async fn query(&self, canister_id: &Principal, method: &str, args: &[u8]) -> Result<Vec<u8>> {
-        let method: &CanisterMethod<State> =
-            self.canister.query_methods.get(method).ok_or_else(|| {
-                format!(
-                    "Canister {} does not have an query method named {}",
-                    canister_id, method
-                )
-                .into_instrumented_error()
-            })?;
+        let method: &CanisterMethod<State> = self.canister.query_methods.get(method).ok_or_else(|| {
+            format!(
+                "Canister {} does not have an query method named {}",
+                canister_id, method
+            )
+            .into_instrumented_error()
+        })?;
 
         let locked_state: std::sync::MutexGuard<State> = self.state.lock().expect("valid");
         let system = Edge::new_with_caller_and_time(self.caller, None);
 
-        method(ImmutableContext::new(&locked_state, &system), args)
-            .map_err(|e| e.into_instrumented_error())
+        method(ImmutableContext::new(&locked_state, &system), args).map_err(|e| e.into_instrumented_error())
     }
 
-    async fn read_state_canister_info(
-        &self,
-        _canister_id: &Principal,
-        _prop: &str,
-    ) -> Result<Vec<u8>> {
+    async fn read_state_canister_info(&self, _canister_id: &Principal, _prop: &str) -> Result<Vec<u8>> {
         todo!();
     }
 

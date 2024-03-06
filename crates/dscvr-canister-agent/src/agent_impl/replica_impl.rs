@@ -32,12 +32,7 @@ impl WrappedAgent {
 #[async_trait::async_trait]
 impl AgentImpl for WrappedAgent {
     async fn query(&self, canister_id: &Principal, method: &str, args: &[u8]) -> Result<Vec<u8>> {
-        Ok(self
-            .agent
-            .query(canister_id, method)
-            .with_arg(args)
-            .call()
-            .await?)
+        Ok(self.agent.query(canister_id, method).with_arg(args).call().await?)
     }
 
     async fn update(&self, canister_id: &Principal, method: &str, args: &[u8]) -> Result<Vec<u8>> {
@@ -50,9 +45,7 @@ impl AgentImpl for WrappedAgent {
     }
 
     fn get_principal(&self) -> Result<Principal> {
-        self.agent
-            .get_principal()
-            .map_err(|e| e.into_instrumented_error())
+        self.agent.get_principal().map_err(|e| e.into_instrumented_error())
     }
 
     async fn clone_with_identity(&self, identity: Arc<dyn Identity>) -> Result<Arc<dyn AgentImpl>> {
@@ -71,11 +64,7 @@ impl AgentImpl for WrappedAgent {
         Ok(agent)
     }
 
-    async fn read_state_canister_info(
-        &self,
-        canister_id: &Principal,
-        prop: &str,
-    ) -> Result<Vec<u8>> {
+    async fn read_state_canister_info(&self, canister_id: &Principal, prop: &str) -> Result<Vec<u8>> {
         Ok(self
             .agent
             .read_state_canister_info(canister_id.to_owned(), prop)
@@ -83,20 +72,14 @@ impl AgentImpl for WrappedAgent {
     }
 }
 
-pub async fn new<U: Into<String>>(
-    identity: Arc<dyn Identity>,
-    url: U,
-) -> Result<Arc<dyn AgentImpl>> {
+pub async fn new<U: Into<String>>(identity: Arc<dyn Identity>, url: U) -> Result<Arc<dyn AgentImpl>> {
     let url_string: String = url.into();
     let agent = Agent::builder()
         .with_transport(ReqwestHttpReplicaV2Transport::create(url_string.clone())?)
         .with_arc_identity(identity)
         .build()?;
 
-    let agent = Arc::new(WrappedAgent {
-        agent,
-        url: url_string,
-    });
+    let agent = Arc::new(WrappedAgent { agent, url: url_string });
 
     agent.fetch_root_key().await?;
 
