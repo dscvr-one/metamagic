@@ -1,0 +1,14 @@
+[package]
+name = "ic-ingress-validator-util"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ic-agent.workspace = true
+ic-crypto-utils-threshold-sig-der = { git = "https://github.com/dscvr-one/ic.git", rev = "cacda1", package = "ic-crypto-utils-threshold-sig-der" }
+ic-validator-ingress-message = { git = "https://github.com/dscvr-one/ic.git", rev = "cacda1", package = "ic-validator-ingress-message" }
+
+ic-identity-util = { path = "../ic-identity-util" }
+instrumented-error = { path = "../instrumented-error" }
