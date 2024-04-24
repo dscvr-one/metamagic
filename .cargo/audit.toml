@@ -1,0 +1,9 @@
+[advisories]
+ignore = [
+    # ignore this one since serde_cbor is unmaintained and is a 
+    # core part of IC libraries
+    "RUSTSEC-2021-0127",
+    # ignore this one for now since rsa is only used internally via
+    # sqlx and should not be exposed to an external caller
+    "RUSTSEC-2023-0071",
+]

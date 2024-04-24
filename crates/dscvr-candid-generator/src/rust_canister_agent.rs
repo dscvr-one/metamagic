@@ -1,11 +1,6 @@
 // Based on Dfinity's rust bindings generator:
 // https://github.com/dfinity/candid/blob/master/rust/candid/src/bindings/rust.rs
 
-use candid::bindings::analysis::chase_actor;
-use candid::bindings::analysis::infer_rec;
-use candid::bindings::rust::TypePath;
-use candid::parser::typing::CheckFileOptions;
-use candid::parser::typing::CheckFileResult;
 use candid::types::Field;
 use candid::types::FuncMode;
 use candid::types::Function;
@@ -13,9 +8,12 @@ use candid::types::Label;
 use candid::types::Type;
 use candid::types::TypeInner;
 use candid::TypeEnv;
+use candid_parser::bindings::analysis::chase_actor;
+use candid_parser::bindings::analysis::infer_rec;
+use candid_parser::bindings::rust::TypePath;
 use convert_case::Case;
 use convert_case::Casing;
-use instrumented_error::Result;
+use instrumented_error::{IntoInstrumentedError, Result};
 use quote::__private::TokenStream;
 use quote::format_ident;
 use quote::quote;
@@ -448,21 +446,11 @@ fn generate_file(path: &Path, tokens: TokenStream) -> Result<()> {
 }
 
 #[tracing::instrument]
-pub fn generate(did: &Path, output: &Path) -> Result<BTreeSet<PathBuf>> {
-    let CheckFileResult {
-        types,
-        actor,
-        imports,
-    } = candid::parser::typing::check_file_with_options(
-        did,
-        &CheckFileOptions {
-            pretty_errors: false,
-            combine_actors: true,
-        },
-    )?;
+pub fn generate(did: &Path, output: &Path) -> Result<Vec<PathBuf>> {
+    let (types, actor, imports) = candid_parser::typing::check_file_with_imports(did)?;
     let (env, actor) = nominalize_all(&types, &actor);
     let def_list: Vec<_> = if let Some(actor) = &actor {
-        chase_actor(&env, actor).unwrap()
+        chase_actor(&env, actor).map_err(|err| format!("{err:?}").into_instrumented_error())?
     } else {
         env.0.iter().map(|pair| pair.0.as_ref()).collect()
     };
@@ -470,10 +458,12 @@ pub fn generate(did: &Path, output: &Path) -> Result<BTreeSet<PathBuf>> {
     let mut tokens = generate_types(&env, &def_list, &recs)?;
 
     if let Some(actor) = actor {
-        let serv = env.as_service(&actor).unwrap();
+        let serv = env
+            .as_service(&actor)
+            .map_err(|err| format!("{err:?}").into_instrumented_error())?;
         serv.iter()
             .map(|(id, func)| {
-                let func = env.as_func(func).unwrap();
+                let func = env.as_func(func).expect("valid function");
                 q_function(id, func)
             })
             .for_each(|f| tokens.extend(f));

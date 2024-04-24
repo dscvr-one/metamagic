@@ -213,8 +213,7 @@ impl CanisterAgent {
             &hash[0..5],
             time.format(format_description!(
                 "[year]-[month]-[day]_[hour]-[minute]-[second]"
-            ))
-            .unwrap()
+            ))?
         ))
     }
 }

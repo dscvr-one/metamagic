@@ -16,7 +16,7 @@ struct WrappedStateMachine {
 #[async_trait::async_trait]
 impl AgentImpl for WrappedStateMachine {
     async fn query(&self, canister_id: &Principal, method: &str, args: &[u8]) -> Result<Vec<u8>> {
-        let state_machine = self.machine.lock().unwrap();
+        let state_machine = self.machine.lock().expect("lock failure");
         match state_machine
             .query_call(
                 canister_id.to_owned(),
@@ -32,7 +32,7 @@ impl AgentImpl for WrappedStateMachine {
     }
 
     async fn update(&self, canister_id: &Principal, method: &str, args: &[u8]) -> Result<Vec<u8>> {
-        let state_machine = self.machine.lock().unwrap();
+        let state_machine = self.machine.lock().expect("lock failure");
         match state_machine
             .update_call(
                 canister_id.to_owned(),
@@ -75,12 +75,14 @@ pub fn new(
 ) -> Result<(Arc<dyn AgentImpl>, Principal)> {
     // TODO: for multi-canister WrappedStateMachine needs to be a singleton
     let machine = Arc::new(Mutex::new(StateMachine::new(
-        &std::env::var("STATE_MACHINE_BINARY_PATH").expect("valid state machine binary path"),
+        &std::env::var("STATE_MACHINE_BINARY_PATH").map_err(|e| {
+            format!("missing valid state machine binary path: {e:?}").into_instrumented_error()
+        })?,
         false,
     )));
 
     let canister_id = {
-        let machine = machine.lock().unwrap();
+        let machine = machine.lock().expect("lock failure");
         let canister_id = machine.create_canister(Some(caller));
         machine.install_canister(canister_id, wasm, init_arguments, Some(caller));
         canister_id
