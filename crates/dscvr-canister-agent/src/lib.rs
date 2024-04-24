@@ -94,6 +94,18 @@ impl CanisterAgent {
         }
     }
 
+    pub async fn new_replica(
+        caller: Arc<dyn Identity>,
+        replica: &str,
+        canister_id: &str,
+    ) -> Result<Self> {
+        let agent = Self {
+            agent: agent_impl::replica_impl::new(caller, replica).await?,
+            canister_id: Principal::from_text(canister_id)?,
+        };
+        Ok(agent)
+    }
+
     pub async fn clone_with_identity(&self, identity: Arc<dyn Identity>) -> Result<Self> {
         Ok(Self {
             agent: self.agent.clone_with_identity(identity).await?,
