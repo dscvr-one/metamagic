@@ -3,21 +3,3 @@
 
 pub mod rust_canister_agent;
 pub mod util;
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    use std::path::Path;
-    const DID: &str = "../../../canister-idls/society-rs/society-common.did";
-    #[test]
-    #[ignore]
-    fn test_generate() {
-        let output_dir: std::path::PathBuf = Path::new("src").join("gen");
-        std::fs::create_dir_all("src/gen").expect("create src/gen");
-        let _ = rust_canister_agent::generate(
-            Path::new(DID),
-            &output_dir.join("dscvr_tx_log_agent.rs"),
-        )
-        .expect("Something good to happen");
-    }
-}
