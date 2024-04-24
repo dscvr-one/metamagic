@@ -2,7 +2,7 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use candid::Principal;
-use ic_agent::agent::http_transport::ReqwestHttpReplicaV2Transport;
+use ic_agent::agent::http_transport::reqwest_transport::ReqwestHttpReplicaV2Transport;
 use ic_agent::Agent;
 use ic_agent::Identity;
 use instrumented_error::IntoInstrumentedError;

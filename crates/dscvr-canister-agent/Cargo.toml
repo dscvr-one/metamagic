@@ -31,7 +31,7 @@ dscvr-canister-exports = { path = "../dscvr-canister-exports" }
 dscvr-interface = { path = "../dscvr-interface" }
 ic-canister-stable-storage = { path = "../ic-canister-stable-storage" }
 ic-identity-util = { path = "../ic-identity-util" }
-ic-test-state-machine-client = "=3.0.0"
+ic-test-state-machine-client = "=3.0.1"
 instrumented-error = { path = "../instrumented-error" }
 
 [build-dependencies]

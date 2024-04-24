@@ -7,8 +7,9 @@ edition = "2021"
 
 [dependencies]
 ic-agent.workspace = true
-ic-crypto-utils-threshold-sig-der = { git = "https://github.com/dscvr-one/ic.git", rev = "cacda1", package = "ic-crypto-utils-threshold-sig-der" }
-ic-validator-ingress-message = { git = "https://github.com/dscvr-one/ic.git", rev = "cacda1", package = "ic-validator-ingress-message" }
+ic-crypto-utils-threshold-sig-der = { git = "https://github.com/dfinity/ic.git", rev = "release-2024-04-17_23-01-query-stats", package = "ic-crypto-utils-threshold-sig-der" }
+ic-types = { git = "https://github.com/dfinity/ic.git", rev = "release-2024-04-17_23-01-query-stats", package = "ic-types" }
+ic-validator-ingress-message = { git = "https://github.com/dfinity/ic.git", rev = "release-2024-04-17_23-01-query-stats", package = "ic-validator-ingress-message" }
 
 ic-identity-util = { path = "../ic-identity-util" }
 instrumented-error = { path = "../instrumented-error" }
