@@ -59,6 +59,7 @@ impl AgentImpl for WrappedAgent {
         let agent = Agent::builder()
             .with_transport(ReqwestHttpReplicaV2Transport::create(&self.url)?)
             .with_arc_identity(identity)
+            .with_verify_query_signatures(false)
             .build()?;
 
         let agent = Arc::new(WrappedAgent {
@@ -91,6 +92,7 @@ pub async fn new<U: Into<String>>(
     let agent = Agent::builder()
         .with_transport(ReqwestHttpReplicaV2Transport::create(url_string.clone())?)
         .with_arc_identity(identity)
+        .with_verify_query_signatures(false)
         .build()?;
 
     let agent = Arc::new(WrappedAgent {
