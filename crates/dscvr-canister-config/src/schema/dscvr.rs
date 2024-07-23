@@ -111,8 +111,8 @@ impl DSCVRConfig {
                 .and_then(|canister_network| canister_network.provisioned_instances.clone());
             for (name, network) in canister.networks.iter_mut() {
                 if copy_to_all || network_name.as_ref().unwrap() == name {
-                    network.available_instances = available.clone();
-                    network.provisioned_instances = provisioned.clone();
+                    network.available_instances.clone_from(&available);
+                    network.provisioned_instances.clone_from(&provisioned);
                 }
             }
         }
