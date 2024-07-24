@@ -151,10 +151,10 @@ impl DfxConfig {
 
     fn update_names(&mut self) {
         for (k, val) in self.canisters.iter_mut() {
-            val.name = k.clone();
+            val.name.clone_from(k);
         }
         for (k, val) in self.networks.iter_mut() {
-            val.name = k.clone();
+            val.name.clone_from(k);
         }
     }
 

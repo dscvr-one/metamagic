@@ -7,6 +7,7 @@ use tracing_subscriber::fmt::time::FormatTime;
 
 pub mod scoped_instruction_counter;
 
+#[allow(dead_code)]
 struct IcStdout;
 
 impl Write for IcStdout {
@@ -27,8 +28,10 @@ impl Write for IcStdout {
     }
 }
 
+#[allow(dead_code)]
 struct IcTimer;
 
+#[allow(dead_code)]
 #[cfg(not(target_arch = "wasm32"))]
 fn current_time_nanos() -> u64 {
     time::OffsetDateTime::now_utc().unix_timestamp_nanos() as u64
