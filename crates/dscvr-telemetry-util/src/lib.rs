@@ -79,8 +79,8 @@ pub mod axum {
                 ("status", status),
             ];
 
-            metrics::increment_counter!(AXUM_HTTP_REQUESTS_TOTAL, &labels);
-            metrics::histogram!(AXUM_HTTP_REQUESTS_DURATION_SECONDS, latency, &labels);
+            metrics::counter!(AXUM_HTTP_REQUESTS_TOTAL, &labels).increment(1);
+            metrics::histogram!(AXUM_HTTP_REQUESTS_DURATION_SECONDS, &labels).record(latency);
         }
 
         response
