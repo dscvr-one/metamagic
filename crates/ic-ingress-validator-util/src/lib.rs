@@ -1,3 +1,6 @@
+pub mod delegation_validator;
+mod webauthn;
+
 use ic_agent::agent::http_transport::ReqwestTransport;
 use ic_agent::identity::AnonymousIdentity;
 use ic_agent::Agent;
