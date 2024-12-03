@@ -2,7 +2,6 @@
 ///
 /// Rather than validating an HttpRequest, we will validate the delegation found in a JWT.  This still
 /// requires a user to setup a ingress verifier as before against a URL with a trust provider.
-
 use crate::webauthn::validate_webauthn_sig;
 use ic_agent::agent::http_transport::ReqwestTransport;
 use ic_agent::export::Principal;
