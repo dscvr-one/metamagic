@@ -15,7 +15,7 @@ pub(crate) fn validate_webauthn_sig(
     signable: &impl Signable,
     public_key: &UserPublicKey,
 ) -> Result<(), String> {
-    let basic_sig = basic_sig_from_webauthn_sig(&webauthn_sig, public_key.algorithm_id)?;
+    let basic_sig = basic_sig_from_webauthn_sig(webauthn_sig, public_key.algorithm_id)?;
 
     let envelope = WebAuthnEnvelope::try_from(webauthn_sig)
         .map_err(|err| format!("WebAuthn envelope creation failed: {}", err))?;
