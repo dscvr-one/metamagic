@@ -17,12 +17,8 @@ pub(crate) fn validate_webauthn_sig(
 ) -> Result<(), String> {
     let basic_sig = basic_sig_from_webauthn_sig(&webauthn_sig, public_key.algorithm_id)?;
 
-    let envelope = match WebAuthnEnvelope::try_from(webauthn_sig) {
-        Ok(envelope) => envelope,
-        Err(err) => {
-            return Err(format!("WebAuthn envelope creation failed: {}", err));
-        }
-    };
+    let envelope = WebAuthnEnvelope::try_from(webauthn_sig)
+        .map_err(|err| format!("WebAuthn envelope creation failed: {}", err))?;
 
     // Verify the signature signs the `WebAuthnEnvelope` provided.
     verifier
@@ -48,7 +44,7 @@ pub(crate) fn validate_webauthn_sig(
 }
 
 fn basic_sig_from_webauthn_sig(
-    webauthn_sig: &&WebAuthnSignature,
+    webauthn_sig: &WebAuthnSignature,
     algorithm_id: AlgorithmId,
 ) -> Result<BasicSig, String> {
     match algorithm_id {
