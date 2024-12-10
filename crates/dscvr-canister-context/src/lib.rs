@@ -60,7 +60,7 @@ impl<'a, State> ImmutableContext<'a, State> {
     }
 }
 
-impl<'a, State> Clone for ImmutableContext<'a, State> {
+impl<State> Clone for ImmutableContext<'_, State> {
     #[inline]
     fn clone(&self) -> Self {
         Self {

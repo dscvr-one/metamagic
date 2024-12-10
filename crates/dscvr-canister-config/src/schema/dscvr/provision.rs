@@ -8,17 +8,17 @@ impl DSCVRConfig {
     ///
     /// ### Inputs
     /// - `canister_name: &str` - Name of the canister to provision
-    /// instances for.
+    ///   instances for.
     /// - `network: &str` - The network to provision instances in.
     /// - `count: usize` - The number of instances to provision. If
-    /// this is greater than the number of availble instances for the
-    /// specified `canister & network`, will throw an error.
+    ///   this is greater than the number of availble instances for the
+    ///   specified `canister & network`, will throw an error.
     ///
     /// ### Returns
     /// - `Result<Vec<CanisterInstance>, DSCVRGenerationError>` - returns
-    /// `Ok()` with the `provisioned_instances` if successful.  These are
-    /// the instances that should be passed to the `dfx canister install`
-    /// command.
+    ///   `Ok()` with the `provisioned_instances` if successful.  These are
+    ///   the instances that should be passed to the `dfx canister install`
+    ///   command.
     pub(crate) fn provision_canisters(
         &mut self,
         canister_name: &str,

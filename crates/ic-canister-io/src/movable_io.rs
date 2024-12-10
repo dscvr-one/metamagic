@@ -16,14 +16,14 @@ impl<'a, R: Read + Seek> MovableReader<'a, R> {
     }
 }
 
-impl<'a, R: Read + Seek> Read for MovableReader<'a, R> {
+impl<R: Read + Seek> Read for MovableReader<'_, R> {
     #[inline]
     fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
         Read::read(&mut self.reader, buf)
     }
 }
 
-impl<'a, R: Read + Seek> Seek for MovableReader<'a, R> {
+impl<R: Read + Seek> Seek for MovableReader<'_, R> {
     #[inline]
     fn seek(&mut self, pos: std::io::SeekFrom) -> std::io::Result<u64> {
         Seek::seek(&mut self.reader, pos)
@@ -44,7 +44,7 @@ impl<'a, W: Write + Seek> MovableWriter<'a, W> {
     }
 }
 
-impl<'a, W: Write + Seek> Write for MovableWriter<'a, W> {
+impl<W: Write + Seek> Write for MovableWriter<'_, W> {
     #[inline]
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         Write::write(&mut self.writer, buf)
@@ -56,7 +56,7 @@ impl<'a, W: Write + Seek> Write for MovableWriter<'a, W> {
     }
 }
 
-impl<'a, W: Write + Seek> Seek for MovableWriter<'a, W> {
+impl<W: Write + Seek> Seek for MovableWriter<'_, W> {
     #[inline]
     fn seek(&mut self, pos: std::io::SeekFrom) -> std::io::Result<u64> {
         Seek::seek(&mut self.writer, pos)
