@@ -5,7 +5,7 @@ use instrumented_error::Result;
 use reqwest::Client;
 use std::sync::Arc;
 
-pub const MAX_ERROR_RETIRES: usize = 3;
+pub const MAX_ERROR_RETRIES: usize = 3;
 
 pub mod embedded_canister_impl;
 pub mod replica_impl;

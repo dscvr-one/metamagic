@@ -59,7 +59,7 @@ impl AgentImpl for WrappedAgent {
         let agent = Agent::builder()
             .with_arc_route_provider(route_provider)
             .with_http_client(client)
-            .with_max_tcp_error_retries(super::MAX_ERROR_RETIRES)
+            .with_max_tcp_error_retries(super::MAX_ERROR_RETRIES)
             .with_arc_identity(identity)
             .with_verify_query_signatures(false)
             .build()?;
@@ -95,7 +95,7 @@ pub async fn new<U: Into<String>>(
     let agent = Agent::builder()
         .with_arc_route_provider(route_provider)
         .with_http_client(client)
-        .with_max_tcp_error_retries(super::MAX_ERROR_RETIRES)
+        .with_max_tcp_error_retries(super::MAX_ERROR_RETRIES)
         .with_arc_identity(identity)
         .with_verify_query_signatures(false)
         .build()?;
