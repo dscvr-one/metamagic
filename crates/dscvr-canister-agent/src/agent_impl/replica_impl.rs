@@ -2,7 +2,6 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use candid::Principal;
-use ic_agent::agent::http_transport::reqwest_transport::ReqwestHttpReplicaV2Transport;
 use ic_agent::Agent;
 use ic_agent::Identity;
 use instrumented_error::IntoInstrumentedError;
@@ -56,8 +55,11 @@ impl AgentImpl for WrappedAgent {
     }
 
     async fn clone_with_identity(&self, identity: Arc<dyn Identity>) -> Result<Arc<dyn AgentImpl>> {
+        let (route_provider, client) = super::get_route_provider_and_client(&self.url)?;
         let agent = Agent::builder()
-            .with_transport(ReqwestHttpReplicaV2Transport::create(&self.url)?)
+            .with_arc_route_provider(route_provider)
+            .with_http_client(client)
+            .with_max_tcp_error_retries(super::MAX_ERROR_RETRIES)
             .with_arc_identity(identity)
             .with_verify_query_signatures(false)
             .build()?;
@@ -89,8 +91,11 @@ pub async fn new<U: Into<String>>(
     url: U,
 ) -> Result<Arc<dyn AgentImpl>> {
     let url_string: String = url.into();
+    let (route_provider, client) = super::get_route_provider_and_client(&url_string)?;
     let agent = Agent::builder()
-        .with_transport(ReqwestHttpReplicaV2Transport::create(url_string.clone())?)
+        .with_arc_route_provider(route_provider)
+        .with_http_client(client)
+        .with_max_tcp_error_retries(super::MAX_ERROR_RETRIES)
         .with_arc_identity(identity)
         .with_verify_query_signatures(false)
         .build()?;

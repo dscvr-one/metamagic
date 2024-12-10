@@ -11,5 +11,10 @@ ic-crypto-utils-threshold-sig-der = { git = "https://github.com/dfinity/ic.git",
 ic-types = { git = "https://github.com/dfinity/ic.git", rev = "release-2024-04-17_23-01-query-stats", package = "ic-types" }
 ic-validator-ingress-message = { git = "https://github.com/dfinity/ic.git", rev = "release-2024-04-17_23-01-query-stats", package = "ic-validator-ingress-message" }
 
+hex = "0.4.3"
 ic-identity-util = { path = "../ic-identity-util" }
 instrumented-error = { path = "../instrumented-error" }
+thiserror.workspace = true
+
+#internal
+dscvr-canister-agent = { path = "../dscvr-canister-agent" }

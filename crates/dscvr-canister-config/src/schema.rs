@@ -84,7 +84,7 @@ pub fn generate_dfx_config_for_network(dscvr_cfg: &DSCVRConfig, network: &str) -
 ///
 /// ### Returns
 /// - `Result<Vec<CanisterInstance>>` - returns `Ok()` with a copy of the
-/// newly available canister instances on success.
+///   newly available canister instances on success.
 pub fn allocate_canisters(
     canister: &str,
     network: &str,
@@ -158,8 +158,7 @@ pub fn augment_canister_ids(canister: &str, network: &str) -> Result<()> {
 ///
 /// ### Returns
 /// - `Result<Vec<CanisterInstance>>` - Returns `Ok()` with a `Vec<CanisterInstance>`
-/// that were provisioned.  These can be used to perform canister operations.
-
+///   that were provisioned.  These can be used to perform canister operations.
 pub fn provision_canisters(
     config: &mut DSCVRConfig,
     canister: &str,

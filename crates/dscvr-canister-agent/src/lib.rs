@@ -23,7 +23,9 @@ mod module_hash;
 mod stable_storage_restore_backup;
 mod stats;
 
+pub use agent_impl::get_route_provider_and_client;
 pub use agent_impl::AgentImpl;
+pub use agent_impl::MAX_ERROR_RETRIES;
 
 /// The content format stored in stable storage
 /// TODO: autogenerate from did

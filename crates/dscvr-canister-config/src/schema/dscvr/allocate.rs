@@ -12,7 +12,7 @@ impl DSCVRConfig {
     ///
     /// ### Returns
     /// - `Result<Vec<CanisterInstance, DSCVRGenerationError>` - Returns `Ok()` with a copy
-    /// of the newly available canisters if successful.
+    ///   of the newly available canisters if successful.
     pub(crate) fn add_available_canisters(
         &mut self,
         canister_name: &str,
@@ -63,7 +63,7 @@ impl DSCVRConfig {
     ///
     /// ### Returns
     /// - `Result<(), DSCVRGenerationErr>` - Returns `Ok()` if able to update canister
-    /// instances.
+    ///   instances.
     pub(crate) fn register_available_canisters(
         &mut self,
         canister_name: &str,

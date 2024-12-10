@@ -16,6 +16,7 @@ futures.workspace = true
 garcon = "0.2.3"
 hex = "0.4"
 ic-agent.workspace = true
+reqwest.workspace = true
 serde_bytes.workspace = true
 serde.workspace = true
 thiserror.workspace = true
