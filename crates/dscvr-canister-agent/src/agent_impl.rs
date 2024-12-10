@@ -1,7 +1,11 @@
 use candid::Principal;
+use ic_agent::agent::route_provider::RoundRobinRouteProvider;
 use ic_agent::Identity;
 use instrumented_error::Result;
+use reqwest::Client;
 use std::sync::Arc;
+
+pub const MAX_ERROR_RETIRES: usize = 3;
 
 pub mod embedded_canister_impl;
 pub mod replica_impl;
@@ -24,6 +28,12 @@ pub trait AgentImpl: Sync + Send {
     async fn clone_with_identity(&self, identity: Arc<dyn Identity>) -> Result<Arc<dyn AgentImpl>>;
 
     fn get_principal(&self) -> Result<Principal>;
+}
+
+pub fn get_route_provider_and_client(url: &str) -> Result<(Arc<RoundRobinRouteProvider>, Client)> {
+    let route_provider = Arc::new(RoundRobinRouteProvider::new(vec![url])?);
+    let client = Client::builder().use_rustls_tls().build()?;
+    Ok((route_provider, client))
 }
 
 #[allow(dead_code)]

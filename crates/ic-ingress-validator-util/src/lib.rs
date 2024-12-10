@@ -1,4 +1,4 @@
-use ic_agent::agent::http_transport::ReqwestTransport;
+use dscvr_canister_agent::MAX_ERROR_RETIRES;
 use ic_agent::identity::AnonymousIdentity;
 use ic_agent::Agent;
 use ic_crypto_utils_threshold_sig_der::parse_threshold_sig_key_from_der;
@@ -10,8 +10,11 @@ use std::sync::Arc;
 pub type IcHttpRequestVerifier = Arc<dyn HttpRequestVerifier<UserQuery> + Send + Sync>;
 
 pub async fn try_new_ingress_verifier(url: &str) -> Result<IcHttpRequestVerifier> {
+    let (route_provider, client) = dscvr_canister_agent::get_route_provider_and_client(url)?;
     let agent: Agent = Agent::builder()
-        .with_transport(ReqwestTransport::create(url)?)
+        .with_arc_route_provider(route_provider)
+        .with_http_client(client)
+        .with_max_tcp_error_retries(MAX_ERROR_RETIRES)
         .with_arc_identity(Arc::new(AnonymousIdentity))
         .build()?;
     agent.fetch_root_key().await?;

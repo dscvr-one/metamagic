@@ -28,7 +28,7 @@ pub fn stable_storage_info() -> (Header, Transient) {
 #[inline]
 pub fn backup_stable_storage(offset: u64, limit: usize) -> ByteBuf {
     let mut bytes = vec![0; limit];
-    ic_cdk::api::stable::stable64_read(offset, &mut bytes);
+    ic_cdk::api::stable::stable_read(offset, &mut bytes);
     ByteBuf::from(bytes)
 }
 
@@ -36,17 +36,17 @@ pub fn backup_stable_storage(offset: u64, limit: usize) -> ByteBuf {
 #[inline]
 pub fn init_stable_storage(len: u64) {
     let page_count = len / WASM_PAGE_SIZE_IN_BYTES as u64 + 1;
-    let current = ic_cdk::api::stable::stable64_size();
+    let current = ic_cdk::api::stable::stable_size();
     if page_count > current {
         info!("Growing stable storage from {} to {}", current, page_count);
-        ic_cdk::api::stable::stable64_grow(page_count).unwrap();
+        ic_cdk::api::stable::stable_grow(page_count).unwrap();
     }
 }
 
 /// Restore the stable storage
 #[inline]
 pub fn restore_stable_storage(offset: u64, bytes: ByteBuf) {
-    ic_cdk::api::stable::stable64_write(offset, &bytes.into_vec());
+    ic_cdk::api::stable::stable_write(offset, &bytes.into_vec());
 }
 
 /// Restore the stable storage from a compressed array of byte buffers
@@ -57,7 +57,7 @@ pub fn restore_stable_storage_compressed(mut offset: u64, compressed_bytes_vec: 
         flate2::read::GzDecoder::new(&bytes.into_vec()[..])
             .read_to_end(&mut read_buffer)
             .unwrap();
-        ic_cdk::api::stable::stable64_write(offset, &read_buffer);
+        ic_cdk::api::stable::stable_write(offset, &read_buffer);
         offset += read_buffer.len() as u64;
         read_buffer.clear();
     }

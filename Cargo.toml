@@ -33,26 +33,27 @@ deepsize = { git = "https://github.com/dscvr-one/deepsize.git", tag = "dscvr-202
     "std",
 ] }
 derive_more = "0.99"
-enum-iterator = "1.2.0"
+enum-iterator = "2.1.0"
 flate2 = "1.0"
 futures = "0.3.25"
-ic-agent = { version = "0.34.0", features = ["pem"] }
-ic-cdk = "0.13"
+ic-agent = { version = "0.39.1", features = ["pem", "ring"] }
+ic-cdk = "0.17.0"
 lazy_static = "1.4"
 num-traits = "0.2.15"
-ring = "0.17"
+reqwest = { version = "~0.12.9", features = ["blocking", "json", "rustls-tls-webpki-roots", "stream" ] }
+ring = { version = "0.17", features = ["std"] }
 rmp-serde = "1.1"
-rustc-hash = { version = "1.1" }
+rustc-hash = { version = "2.1" }
 serde = "1.0"
 serde_bytes = "0.11"
 serde_json = "1.0"
-thiserror = "1.0"
+thiserror = "~2.0.6"
 time = "0.3.17"
 tokio = "1.0"
 tokio-retry = "0.3"
 tracing = "0.1"
 tracing-error = { version = "0.2", features = ["traced-error"] }
-tracing-stackdriver = "0.8"
+tracing-stackdriver = "0.10.0"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [patch.crates-io]
