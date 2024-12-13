@@ -64,6 +64,6 @@ impl Interface for InternetComputer {
     }
 
     fn stable64_size(&self) -> u64 {
-        ic_cdk::api::stable::stable64_size()
+        ic_cdk::api::stable::stable_size()
     }
 }
