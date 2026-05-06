@@ -11,6 +11,7 @@ use candid::TypeEnv;
 use candid_parser::bindings::analysis::chase_actor;
 use candid_parser::bindings::analysis::infer_rec;
 use candid_parser::bindings::rust::TypePath;
+use candid_parser::syntax::IDLMergedProg;
 use convert_case::Case;
 use convert_case::Casing;
 use instrumented_error::{IntoInstrumentedError, Result};
@@ -20,7 +21,6 @@ use quote::quote;
 use std::collections::BTreeSet;
 use std::io::Write;
 use std::path::Path;
-use candid_parser::syntax::IDLMergedProg;
 use syn::Ident;
 
 fn is_tuple(fs: &[candid::types::Field]) -> bool {

@@ -1,7 +1,7 @@
 use candid::pretty::candid::compile;
 use candid_parser::check_file_with_imports;
 use instrumented_error::Result;
-use std::path::{Path};
+use std::path::Path;
 
 /// Combines all imported candid files into a single file.
 #[tracing::instrument]

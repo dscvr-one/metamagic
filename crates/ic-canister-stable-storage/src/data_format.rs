@@ -7,7 +7,16 @@ use std::io::{Read, Write};
 
 /// The format type of the
 #[derive(
-    Default, Debug, Copy, Clone, Serialize, Deserialize, CandidType, PartialEq, Eq, derive_more::Display,
+    Default,
+    Debug,
+    Copy,
+    Clone,
+    Serialize,
+    Deserialize,
+    CandidType,
+    PartialEq,
+    Eq,
+    derive_more::Display,
 )]
 #[repr(u64)]
 pub enum DataFormatType {
