@@ -54,6 +54,7 @@ impl Interface for UnitTest {
     }
 }
 
+#[allow(dead_code)]
 struct TestFuture;
 
 impl Future for TestFuture {

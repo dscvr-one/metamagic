@@ -70,6 +70,7 @@ impl Interface for Edge {
     }
 }
 
+#[allow(dead_code)]
 struct TestFuture;
 
 impl Future for TestFuture {

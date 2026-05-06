@@ -7,22 +7,17 @@ use std::io::{Read, Write};
 
 /// The format type of the
 #[derive(
-    Debug, Copy, Clone, Serialize, Deserialize, CandidType, PartialEq, Eq, derive_more::Display,
+    Default, Debug, Copy, Clone, Serialize, Deserialize, CandidType, PartialEq, Eq, derive_more::Display,
 )]
 #[repr(u64)]
 pub enum DataFormatType {
     /// Unknown
+    #[default]
     Unknown = 0,
     /// MsgPack
     MsgPack = 1,
     /// Bincode
     Bincode = 2,
-}
-
-impl Default for DataFormatType {
-    fn default() -> Self {
-        Self::Unknown
-    }
 }
 
 impl From<u64> for DataFormatType {

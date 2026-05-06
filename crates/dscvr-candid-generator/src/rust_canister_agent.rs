@@ -20,7 +20,7 @@ use quote::quote;
 use std::collections::BTreeSet;
 use std::io::Write;
 use std::path::Path;
-use std::path::PathBuf;
+use candid_parser::syntax::IDLMergedProg;
 use syn::Ident;
 
 fn is_tuple(fs: &[candid::types::Field]) -> bool {
@@ -277,7 +277,7 @@ fn path_to_var(path: &[TypePath]) -> String {
         .iter()
         .map(|node| match node {
             TypePath::Id(id) => id.to_string(),
-            TypePath::RecordField(f) | TypePath::VariantField(f) => {
+            TypePath::RecordField(f) | TypePath::VariantField(f) | TypePath::ResultField(f) => {
                 f.to_string().to_case(Case::Title)
             }
             TypePath::Opt => "Inner".to_owned(),
@@ -446,7 +446,7 @@ fn generate_file(path: &Path, tokens: TokenStream) -> Result<()> {
 }
 
 #[tracing::instrument]
-pub fn generate(did: &Path, output: &Path) -> Result<Vec<PathBuf>> {
+pub fn generate(did: &Path, output: &Path) -> Result<IDLMergedProg> {
     let (types, actor, imports) = candid_parser::typing::check_file_with_imports(did)?;
     let (env, actor) = nominalize_all(&types, &actor);
     let def_list: Vec<_> = if let Some(actor) = &actor {
