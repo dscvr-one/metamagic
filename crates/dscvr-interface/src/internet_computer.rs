@@ -1,3 +1,4 @@
+use std::thread::spawn;
 use crate::{Interface, Principal};
 use ic_cdk::call::RejectCode;
 use std::cell::RefCell;
@@ -14,11 +15,11 @@ impl Interface for InternetComputer {
     }
 
     fn caller(&self) -> Principal {
-        ic_cdk::caller()
+        ic_cdk::api::msg_caller()
     }
 
     fn canister_balance(&self) -> u64 {
-        ic_cdk::api::canister_balance()
+        ic_cdk::api::canister_cycle_balance() as u64
     }
 
     fn call_canister(
@@ -30,15 +31,15 @@ impl Interface for InternetComputer {
     ) -> Result<Vec<u8>, (RejectCode, String)> {
         // Ideally ic_cdk::spawn would allow returning a result, but it doesn't. so we go through
         // some gymanistics to make it work.
-        let result: Rc<RefCell<Result<Vec<u8>, (RejectionCode, String)>>> = Rc::new(RefCell::new(
+        let result: Rc<RefCell<Result<Vec<u8>, (RejectCode, String)>>> = Rc::new(RefCell::new(
             Err((RejectCode::CanisterReject, "spawn failed".to_owned())),
         ));
         {
             let caller_result = result.clone();
-            ic_cdk::spawn(async move {
+            ic_cdk::futures::spawn(async move {
                 let result =
-                    ic_cdk::api::call::call_raw(canister_id, &method, &args, payment).await;
-                let _ = caller_result.replace(result);
+                    ic_cdk::call::Call::unbounded_wait(canister_id, &method).with_arg(&args).with_cycles(payment as u128).await.map_err(|e| (RejectCode::CanisterReject, e.to_string()));
+                let _ = caller_result.replace(result.map(|f| f.into_bytes()));
             });
         }
         let mut mut_borrow = result.borrow_mut();
@@ -49,7 +50,7 @@ impl Interface for InternetComputer {
     }
 
     fn id(&self) -> Principal {
-        ic_cdk::api::id()
+        ic_cdk::api::canister_self()
     }
     fn get_memory_usage(&self) -> u64 {
         (core::arch::wasm32::memory_size(0) * 65536) as u64
@@ -64,6 +65,6 @@ impl Interface for InternetComputer {
     }
 
     fn stable64_size(&self) -> u64 {
-        ic_cdk::api::stable::stable64_size()
+        ic_cdk::stable::stable_size()
     }
 }
