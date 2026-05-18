@@ -13,7 +13,9 @@ struct IcStdout;
 impl Write for IcStdout {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         #[cfg(target_arch = "wasm32")]
-        ic_cdk::print(std::str::from_utf8(buf).map_err(|_e| std::io::ErrorKind::InvalidData)?);
+        ic_cdk::api::debug_print(
+            std::str::from_utf8(buf).map_err(|_e| std::io::ErrorKind::InvalidData)?,
+        );
         #[cfg(not(target_arch = "wasm32"))]
         print!(
             "{}",
