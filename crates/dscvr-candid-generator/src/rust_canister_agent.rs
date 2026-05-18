@@ -11,7 +11,6 @@ use candid::TypeEnv;
 use candid_parser::bindings::analysis::chase_actor;
 use candid_parser::bindings::analysis::infer_rec;
 use candid_parser::bindings::rust::TypePath;
-use candid_parser::syntax::IDLMergedProg;
 use convert_case::Case;
 use convert_case::Casing;
 use instrumented_error::{IntoInstrumentedError, Result};
@@ -20,7 +19,7 @@ use quote::format_ident;
 use quote::quote;
 use std::collections::BTreeSet;
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use syn::Ident;
 
 fn is_tuple(fs: &[candid::types::Field]) -> bool {
@@ -446,8 +445,8 @@ fn generate_file(path: &Path, tokens: TokenStream) -> Result<()> {
 }
 
 #[tracing::instrument]
-pub fn generate(did: &Path, output: &Path) -> Result<IDLMergedProg> {
-    let (types, actor, imports) = candid_parser::typing::check_file_with_imports(did)?;
+pub fn generate(did: &Path, output: &Path) -> Result<Vec<PathBuf>> {
+    let (types, actor, imports, _prog) = candid_parser::typing::check_file_with_imports(did)?;
     let (env, actor) = nominalize_all(&types, &actor);
     let def_list: Vec<_> = if let Some(actor) = &actor {
         chase_actor(&env, actor).map_err(|err| format!("{err:?}").into_instrumented_error())?

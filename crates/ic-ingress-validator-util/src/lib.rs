@@ -2,12 +2,12 @@ use dscvr_canister_agent::MAX_ERROR_RETRIES;
 use ic_agent::identity::AnonymousIdentity;
 use ic_agent::Agent;
 use ic_crypto_utils_threshold_sig_der::parse_threshold_sig_key_from_der;
-use ic_types::messages::UserQuery;
 use ic_validator_ingress_message::{HttpRequestVerifier, IngressMessageVerifier};
 use instrumented_error::Result;
 use std::sync::Arc;
+use ic_types::messages::Query;
 
-pub type IcHttpRequestVerifier = Arc<dyn HttpRequestVerifier<UserQuery> + Send + Sync>;
+pub type IcHttpRequestVerifier = Arc<dyn HttpRequestVerifier<Query> + Send + Sync>;
 
 pub async fn try_new_ingress_verifier(url: &str) -> Result<IcHttpRequestVerifier> {
     let (route_provider, client) = dscvr_canister_agent::get_route_provider_and_client(url)?;

@@ -1,5 +1,5 @@
 use crate::{Interface, Principal};
-use ic_cdk::api::call::RejectionCode;
+use ic_cdk::call::RejectCode;
 use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
@@ -45,7 +45,7 @@ impl Interface for Edge {
         _method: String,
         _args: Vec<u8>,
         _payment: u64,
-    ) -> Result<Vec<u8>, (RejectionCode, String)> {
+    ) -> Result<Vec<u8>, (RejectCode, String)> {
         unimplemented!();
     }
 
@@ -74,7 +74,7 @@ impl Interface for Edge {
 struct TestFuture;
 
 impl Future for TestFuture {
-    type Output = Result<Vec<u8>, (RejectionCode, String)>;
+    type Output = Result<Vec<u8>, (RejectCode, String)>;
 
     fn poll(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<Self::Output> {
         let result = Ok(vec![]);

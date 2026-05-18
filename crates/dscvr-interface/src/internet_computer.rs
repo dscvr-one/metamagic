@@ -1,7 +1,7 @@
 use crate::{Interface, Principal};
-use ic_cdk::api::call::RejectionCode;
 use std::cell::RefCell;
 use std::rc::Rc;
+use ic_cdk::call::RejectCode;
 
 pub const SYSTEM: &dyn Interface = &InternetComputer;
 
@@ -27,11 +27,11 @@ impl Interface for InternetComputer {
         method: String,
         args: Vec<u8>,
         payment: u64,
-    ) -> Result<Vec<u8>, (RejectionCode, String)> {
+    ) -> Result<Vec<u8>, (RejectCode, String)> {
         // Ideally ic_cdk::spawn would allow returning a result, but it doesn't. so we go through
         // some gymanistics to make it work.
         let result: Rc<RefCell<Result<Vec<u8>, (RejectionCode, String)>>> = Rc::new(RefCell::new(
-            Err((RejectionCode::CanisterReject, "spawn failed".to_owned())),
+            Err((RejectCode::CanisterReject, "spawn failed".to_owned())),
         ));
         {
             let caller_result = result.clone();
