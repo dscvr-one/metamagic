@@ -1,5 +1,5 @@
 use candid::Principal;
-use ic_cdk::api::call::RejectionCode;
+use ic_cdk::call::RejectCode;
 
 #[cfg(not(target_arch = "wasm32"))]
 pub mod edge;
@@ -18,7 +18,7 @@ pub trait Interface: Send + Sync {
         method: String,
         args: Vec<u8>,
         payment: u64,
-    ) -> Result<Vec<u8>, (RejectionCode, String)>;
+    ) -> Result<Vec<u8>, (RejectCode, String)>;
     fn id(&self) -> Principal;
     fn get_memory_usage(&self) -> u64;
     fn performance_counter(&self, counter_type: u32) -> u64;
