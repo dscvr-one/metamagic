@@ -226,14 +226,14 @@ impl DfxConfig {
                 })
                 .collect();
             for (network_name, group_name) in network_controllers {
-                if group_name.is_some() {
+                if let Some(name) = group_name {
                     let cg = root_file
                         .controller_groups
                         .as_ref()
                         .ok_or_else(|| {
                             DfxGenerationError::ControllerGroupMissing(canister_name.to_string())
                         })?
-                        .get(group_name.unwrap())
+                        .get(name)
                         .ok_or_else(|| {
                             DfxGenerationError::ControllerGroupMismatch(
                                 group_name.unwrap().clone(),
