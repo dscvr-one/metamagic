@@ -1,8 +1,8 @@
-use std::thread::spawn;
 use crate::{Interface, Principal};
 use ic_cdk::call::RejectCode;
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::thread::spawn;
 
 pub const SYSTEM: &dyn Interface = &InternetComputer;
 
@@ -37,8 +37,11 @@ impl Interface for InternetComputer {
         {
             let caller_result = result.clone();
             ic_cdk::futures::spawn(async move {
-                let result =
-                    ic_cdk::call::Call::unbounded_wait(canister_id, &method).with_arg(&args).with_cycles(payment as u128).await.map_err(|e| (RejectCode::CanisterReject, e.to_string()));
+                let result = ic_cdk::call::Call::unbounded_wait(canister_id, &method)
+                    .with_arg(&args)
+                    .with_cycles(payment as u128)
+                    .await
+                    .map_err(|e| (RejectCode::CanisterReject, e.to_string()));
                 let _ = caller_result.replace(result.map(|f| f.into_bytes()));
             });
         }
