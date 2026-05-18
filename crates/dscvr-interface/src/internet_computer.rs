@@ -1,7 +1,7 @@
 use crate::{Interface, Principal};
+use ic_cdk::call::RejectCode;
 use std::cell::RefCell;
 use std::rc::Rc;
-use ic_cdk::call::RejectCode;
 
 pub const SYSTEM: &dyn Interface = &InternetComputer;
 

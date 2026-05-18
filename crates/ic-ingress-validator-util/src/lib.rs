@@ -2,10 +2,10 @@ use dscvr_canister_agent::MAX_ERROR_RETRIES;
 use ic_agent::identity::AnonymousIdentity;
 use ic_agent::Agent;
 use ic_crypto_utils_threshold_sig_der::parse_threshold_sig_key_from_der;
+use ic_types::messages::Query;
 use ic_validator_ingress_message::{HttpRequestVerifier, IngressMessageVerifier};
 use instrumented_error::Result;
 use std::sync::Arc;
-use ic_types::messages::Query;
 
 pub type IcHttpRequestVerifier = Arc<dyn HttpRequestVerifier<Query> + Send + Sync>;
 
