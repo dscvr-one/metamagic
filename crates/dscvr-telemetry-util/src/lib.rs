@@ -4,6 +4,7 @@ pub const IC_REPLICA_REQUESTS_TOTAL: &str = "ic-replica-requests-total";
 pub const IC_REPLICA_REQUESTS_DURATION_SECONDS: &str = "ic-replica-requests-duration-seconds";
 
 pub mod axum {
+    use axum::body::Body;
     use axum::{extract::MatchedPath, middleware::Next, response::Response, routing::get, Router};
     use http::Request;
     use metrics_exporter_prometheus::{BuildError, Matcher, PrometheusBuilder};
@@ -59,7 +60,7 @@ pub mod axum {
     // Defines a prometheus metrics collection function for defining a tower layer handler
     // as a function. Allows measuring metrics from a router endpoints without needing to expose
     // the metrics endpoint itself on the router or define the endpoint for rendering metrics gathered
-    pub async fn track_metrics<B>(req: Request<B>, next: Next<B>) -> Response {
+    pub async fn track_metrics(req: Request<Body>, next: Next) -> Response {
         let start = Instant::now();
         let path = req
             .extensions()
